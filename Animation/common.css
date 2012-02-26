@@ -1,0 +1,38 @@
+/* CSS Document */
+/* CSS Reset */
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td,table{margin:0;padding:0;}
+table{border-collapse:collapse;border-spacing:0;}
+fieldset,img{border:0;}
+address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-size:normal;}
+ol,ul{list-style:}
+caption,th{text-align:left;}
+h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal;}
+q:before,q:after{content:"";}
+abbr,acroonym{border:0;}
+address{font-style:normal;}
+
+/* basic common CSS */
+/* font */
+.f_12{font-size:12px;}
+.f_14{font-size:14px;}
+.f_16{font-size:16px;}
+.fw_n{font-weight:normal;}
+.ti_2{text-indent:2em;}
+/* position */
+.p_r{position:relative;}
+.p_a{position:absolute;}
+.f_l{float:left;}
+.f_r{float:right;}
+.ta_c{text-align:center;}
+.c_b{clear:both;}
+.c_l{clear:left;}
+.c_r{clear:right;}
+.clearfix:after{content:".";display:block;height:0;clear:both;visibility:hidden;}*html .clearfix{height:1%;display:inline-block;}/* hack */
+.zoom{zoom:1;}
+.hidden{visibility:hidden;}
+.none{display:none;}
+.block{display:block;}
+.inline{display:inline;}
+.baseline{vertical-align:baseline;}
+/* ³¤¿í */
+.w_100{width:100%;}
