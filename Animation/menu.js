@@ -170,6 +170,12 @@ function animate(elem,from,to,dur,fx,func,fps){
 	//console.log('');
 }
 
+function animateSec(elem,from,to,change,fx,func){
+	
+}
+
+
+
 function clearAnimate(elem,animateId){
 	clearInterval(animateId);
 	Queue.deQueue(elem,animateId);
@@ -384,28 +390,3 @@ Easing =
 	}
 }
 
-function init(){
-	var ul = getByClassName('drop');
-	for(var i = 0; i < ul.length; i++){
-		setStyleById(ul[i],{'display':'none','overflow':'hidden'});
-	}
-}
-window.onload = function(){
-	init();
-	var menu = document.getElementsByClassName('menu')[0],lis = getChildren(menu);
-	for(var i = 0, len = lis.length; i < len; i++){
-		addEvent(lis[i],'mouseover',function(e){
-			//var event = e || window.event;
-			var ul = getByClassName('drop',this)[0];
-			//animate(ul,{'height':'0px','width':'104px'},{'height':'120px','width':'104px'},1,Easing.easeInQuad);
-			animate(ul,{'height':''},{'height':'120px'},1,Easing.easeLine);
-			//setStyleById(ul,{'display':'block'});
-		});
-		addEvent(lis[i],'mouseout',function(e){
-			var ul = getByClassName('drop',this)[0];
-			//setStyleById(ul,{'display':'none'});
-			//animate(ul,{'height':'','width':''},{'height':'0px','width':'0px'},2,Easing.easeInQuad);
-			animate(ul,{'height':''},{'height':'0px'},1,Easing.easeLine);
-		});
-	}
-}
