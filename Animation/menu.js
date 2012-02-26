@@ -1,5 +1,12 @@
+/*
+ * DOM Manipulation Functions
+ *
+ */
 
-
+/*
+ *$():
+ *获取一个或者一组DOM节点，可传入参数为id或者DOM节点，支持多个参数的传递。
+ */
 function $(){
 	var elems = [];
 	for(var i = 0; i < arguments.length; i++){
