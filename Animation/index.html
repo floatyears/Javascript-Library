@@ -24,7 +24,7 @@
 		}
 		window.onload = function(){
 			init();
-			var menu = document.getElementsByClassName('menu')[0],lis = getChildren(menu);
+			var menu = getByClassName('menu')[0],lis = getChildren(menu);
 			for(var i = 0, len = lis.length; i < len; i++){
 				addEvent(lis[i],'mouseover',function(e){
 					//var event = e || window.event;
@@ -40,20 +40,38 @@
 					animate(ul,{'height':''},{'height':'0px'},1,Easing.easeLine);
 				});
 			}
-			var box = getByClassName('box')[0];
+			var box0 = getByClassName('box')[0],box1 = getByClassName('box')[1];
 			function line(elem){
 				var left = 0;
-				var lineId = setInterval(function(elem){
+				var lineId = setInterval(function(){
 					 setStyleById(elem,{'left':left+'px'});
 					 left+=4;
+					 console.log(elem);
+					 if(left > 100) clearInterval(lineId);
 				},40)
 			}
-			addEvent(box,'mouseover',line(box));
+			function easeInQuad(elem){
+				var left = 0, curTime = 0;
+				var quadId = setInterval(function(){
+					 setStyleById(elem,{'left':left+'px'});
+					 left = Easing.easeInQuad(curTime,0,100,1000);
+					 curTime += 40;
+					 if(left > 100) clearInterval(quadId);
+				},40)
+			}
+			
+			addEvent(box0,'mouseover',function(){
+				line(box0);
+			});
+			addEvent(box1,'mouseover',function(){
+				easeInQuad(box1);
+			})
 		}
 		
 	</script>
 </head>
 <body>
+<div class="box"></div><br/>
 <div class="box"></div>
 	<ul class="menu">
 		<li><a href="#">菜单</a>
