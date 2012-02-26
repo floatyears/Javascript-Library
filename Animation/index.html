@@ -12,10 +12,23 @@
 		.menu>li:hover{background:white;}
 		.menu li ul{width:100%;border:2px #09c solid;margin-left:-2px;}
 		.menu li ul li:hover{background:#eee;}
+		.box{width:50px;height:50px;position:relative;background:#000;}
 	</style>
 	<script type="text/javascript" src="menu.js"></script>
+	<script type="text/javascript">
+		var box = getByClassName('box')[0];
+		function line(elem){
+			var left = 0;
+			var lineId = setInterval(function(elem){
+				 setStyleById(elem,{'left':left+'px'});
+				 left+=4;
+			},40)
+		}
+		addEvent(box,'mouseover',line(box));
+	</script>
 </head>
 <body>
+<div class="box"></div>
 	<ul class="menu">
 		<li><a href="#">菜单</a>
 			<ul class="drop   child_01">
