@@ -4,8 +4,8 @@
  */
 
 /*
- *$():
- *获取一个或者一组DOM节点，可传入参数为id或者DOM节点，支持多个参数的传递。
+ * $():
+ * 获取一个或者一组DOM节点，可传入参数为id或者DOM节点，支持多个参数的传递。
  */
 function $(){
 	var elems = [];
@@ -24,11 +24,21 @@ function $(){
 	return elems;
 }
 
+/*
+ * camlize():将值变为驼峰式
+ * 例如:'word-word'转化为'wordWord'
+ */
 function camlize(prop){
 	return prop.replace(/\-(\w)/g,function(strMatch,p1){
 		return p1.toUpperCase();
 	});
 }
+
+/*
+ * uncamlize():将值变为间隔式
+ * sep：间隔符，如果没有定义，则使用默认的'-'
+ * 例如:'wordWord'转化为'word-word'
+ */
 function uncamlize(prop,sep){
 	return prop.replace(/[A-Z]/g,function(strMatch){
 		return ((sep?sep:"-") + strMatch.toLowerCase());
@@ -36,11 +46,11 @@ function uncamlize(prop,sep){
 }
 
 /*
- * arguments:
- * 
- *
+ * getStyle():获得元素的最终样式
+ * elem表示操作的元素
+ * props表示要获取的属性。例如：['background-color','height']
+ * pseudoEl表示伪元素，例如getStyle(elem,['height'],':before')
  */
-
 function getStyle(elem,props,pseudoEl){
 	var styles = {};
 	if(elem.currentStyle){
@@ -57,6 +67,11 @@ function getStyle(elem,props,pseudoEl){
 	return styles;
 }
 
+/*
+ * setStyleById():根据$()函数得到的元素来设置样式
+ * elem表示操作的元素。
+ * styles表示要设置的样式值。例如：setStyle(elem,{'background-color':'black'})
+ */
 function setStyleById(elem,styles){
 	if(!(elem = $(elem))) return false;
 	for(var prop in styles){
@@ -70,7 +85,11 @@ function setStyleById(elem,styles){
 	}
 }
 
-
+/*
+ * setStyleByClassName()；根据传入的类名设置样式
+ * className表示类名
+ * styles表示样式值。例如：setStyle(elem,{'background-color':'black'})
+ */
 function setStyleByClassName(className,styles){
 	if(!(elems = getByClassName(className))) return false;
 	for(var i = 0; i < elems.length; i++){
@@ -78,6 +97,10 @@ function setStyleByClassName(className,styles){
 	}
 }
 
+/*
+ * getChildren():获取节点类的子元素
+ * elem：要获取子元素的节点。
+ */
 function getChildren(elem){
 	var elems = [];
 	for(var i = 0,children = elem.childNodes, len = children.length; i < len; i ++){
@@ -88,6 +111,11 @@ function getChildren(elem){
 	return elems;
 }
 
+/*
+ * hasClass():检测某个元素是否含有相应类名
+ * elem表示要检测的元素
+ * className表示类名
+ */
 function hasClass(elem,className){
 	classes = elem.className.split(/\s+/g);
 	for(var i = 0; i < classes.length; i++){
@@ -98,6 +126,11 @@ function hasClass(elem,className){
 	return false;
 }
 
+/*
+ * getByClassName():通过类名来获取元素
+ * className表示类名
+ * elem表示要要取得的元素的上下文。默认为document
+ */
 function getByClassName(className,elem){
 	elem = elem || document;
 	if(elem.getElementsByClassName){
@@ -112,6 +145,13 @@ function getByClassName(className,elem){
 		return nodes;
 	}
 }
+
+/*
+ * addEvent():给元素添加事件监听
+ * elem表示要监听的元素
+ * type表示事件类型。例如:'mouseover'
+ * func表示事件监听函数。
+ */
 function addEvent(elem,type,func){
 	if(elem.attachEvent){
 		elem['e'+type+func] = func;
@@ -126,10 +166,10 @@ function addEvent(elem,type,func){
 }
 
 /*
- *arguments:
- *--elem: the element to animate.
- *--from: object,the element's starting properties,or has no value
- *--to: object,the element's ending state.
+ * animate:
+ * elem: the element to animate.
+ * from: object,the element's starting properties,or has no value
+ * to: object,the element's ending state.
  */
 
 function animate(elem,from,to,dur,fx,func,fps){
@@ -181,6 +221,12 @@ function clearAnimate(elem,animateId){
 	Queue.deQueue(elem,animateId);
 }
 
+/*
+ * Queue:队列对象
+ * checkQueue()：检查相应的元素和animateId是否在队列中。
+ * addQueue()：将响应的元素和animateId值添加到队列中。
+ * deQueue():将animateId弹出队列并停止动画。
+ */
 var Queue = (function(){
 	//var queues = [];
 	var queue = [];
