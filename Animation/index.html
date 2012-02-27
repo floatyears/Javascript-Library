@@ -12,6 +12,7 @@
 		.menu>li:hover{background:white;}
 		.menu li ul{width:100%;border:2px #09c solid;margin-left:-2px;}
 		.menu li ul li:hover{background:#eee;}
+		.box{width:50px;height:50px;position:relative;background:#000;}
 	</style>
 	<script type="text/javascript" src="menu.js"></script>
 	<script type="text/javascript">
@@ -76,9 +77,13 @@
 			addEvent(box2,'mouseover',function(){
 				animateSec(box2);
 			});
+		}
 	</script>
 </head>
 <body>
+<div class="box"></div><br/>
+<div class="box"></div><br/>
+<div class="box"></div>
 	<ul class="menu">
 		<li><a href="#">菜单</a>
 			<ul class="drop   child_01">
