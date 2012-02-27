@@ -39,7 +39,43 @@
 					animate(ul,{'height':''},{'height':'0px'},1,Easing.easeLine);
 				});
 			}
-		}
+			var box0 = getByClassName('box')[0],box1 = getByClassName('box')[1],box2 = getByClassName('box')[2];
+			function line(elem){
+				var left = 0;
+				var lineId = setInterval(function(){
+					 setStyleById(elem,{'left':left+'px'});
+					 left+=4;
+					 console.log(elem);
+					 if(left > 100) clearInterval(lineId);
+				},40)
+			}
+			function easeInQuad(elem){
+				var left = 0, curTime = 0;
+				var quadId = setInterval(function(){
+					 setStyleById(elem,{'left':left+'px'});
+					 left = Easing.easeInQuad(curTime,0,100,1000);
+					 curTime += 40;
+					 if(left > 100) clearInterval(quadId);
+				},40)
+			}
+			var left = 0, change = 2,sep;
+			function animateSec(){
+				left += change;
+				sep = change/(2*Math.sqrt(left))*70;
+				console.log(sep);
+				if(left > 300){return;}
+				var animateSecId = setTimeout(animateSec,sep);
+				setStyleById(box2,{'left':left+'px'});
+			}
+			addEvent(box0,'mouseover',function(){
+				line(box0);
+			});
+			addEvent(box1,'mouseover',function(){
+				easeInQuad(box1);
+			});
+			addEvent(box2,'mouseover',function(){
+				animateSec(box2);
+			});
 	</script>
 </head>
 <body>
