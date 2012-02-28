@@ -25,6 +25,51 @@ function $(){
 }
 
 /*
+ * getByClassName():通过类名来获取元素
+ * className表示类名
+ * elem表示要要取得的元素的上下文。默认为document
+ */
+function getByClassName(className,elem){
+	elem = elem || document;
+	if(elem.getElementsByClassName){
+		return elem.getElementsByClassName(className);
+	}else{
+		var elems = elem.getElementsByTagName("*"),nodes = [];
+		for(var i = 0; i < elems.length; i++){
+			if(hasClass(elems[i],className)){
+				nodes.push(elems[i]);
+			}	
+		}
+		return nodes;
+	}
+}
+
+/*
+ * getChildren():获取节点类的子元素
+ * elem：要获取子元素的节点。
+ */
+function getChildren(elem){
+	var elems = [];
+	for(var i = 0,children = elem.childNodes, len = children.length; i < len; i ++){
+		if (children[i].nodeType == 1){
+			elems.push(children[i]);
+		}
+	}
+	return elems;
+}
+
+/*
+ * Cascading Stylsheet Manipulation Funcitons
+ *
+ *
+ */
+
+/*
+ * 
+ *
+ */
+ 
+/*
  * camlize():将值变为驼峰式
  * 例如:'word-word'转化为'wordWord'
  */
@@ -77,7 +122,7 @@ function setStyleById(elem,styles){
 	for(var prop in styles){
 		if(!styles.hasOwnProperty(prop)) continue;
 		if(elem.style.setProperty){
-			elem.style.setProperty(camlize(prop),styles[prop],null);
+			elem.style.setProperty(uncamlize(prop,'-'),styles[prop],null);
 			//console.log(camlize(prop));
 		}else{
 			elem.style[camelize(prop)] = styles[prop];
@@ -90,25 +135,35 @@ function setStyleById(elem,styles){
  * className表示类名
  * styles表示样式值。例如：setStyle(elem,{'background-color':'black'})
  */
-function setStyleByClassName(className,styles){
-	if(!(elems = getByClassName(className))) return false;
+function setStyleByClassName(className,styles,parent){
+	if(!(parent = $(parent))) return false;
+	if(!(elems = getByClassName(classNam,parent))) return false;
 	for(var i = 0; i < elems.length; i++){
 		setStyleById(elems[i],styles);
 	}
 }
 
 /*
- * getChildren():获取节点类的子元素
- * elem：要获取子元素的节点。
+ * setStyleByTagName():根据标签名设置元素样式
+ * tagName表示标签名。
+ * styles表示要设置的样式
+ * parent表示父元素。
  */
-function getChildren(elem){
-	var elems = [];
-	for(var i = 0,children = elem.childNodes, len = children.length; i < len; i ++){
-		if (children[i].nodeType == 1){
-			elems.push(children[i]);
-		}
+function setStyleByTagName(tagName,styles,parent){
+	parent = $(parent) || document;
+	var elems = parent.getElementByTagName(tagName);
+	for(var i in elems){
+		setStyleById(elems[i],styles);
 	}
-	return elems;
+}
+
+/*
+ * getClass():获取元素的类名
+ *
+ */
+function getClass(elem){
+	if(!(elem = $(elem))) return false;
+	return elem.className.split(/\s+/g);
 }
 
 /*
@@ -117,9 +172,10 @@ function getChildren(elem){
  * className表示类名
  */
 function hasClass(elem,className){
-	classes = elem.className.split(/\s+/g);
-	for(var i = 0; i < classes.length; i++){
-		if(classes[i] == className){
+	var classNames;
+	if(!(classNames = getClass(elem))) return false;
+	for(var i = 0; i < classNames.length; i++){
+		if(classNames[i] == className){
 			return true;
 		}
 	}
@@ -127,25 +183,183 @@ function hasClass(elem,className){
 }
 
 /*
- * getByClassName():通过类名来获取元素
- * className表示类名
- * elem表示要要取得的元素的上下文。默认为document
+ * removeClass():移除元素的类名
+ *
  */
-function getByClassName(className,elem){
-	elem = elem || document;
-	if(elem.getElementsByClassName){
-		return elem.getElementsByClassName(className);
-	}else{
-		var elems = elem.getElementsByTagName("*"),nodes = [];
-		for(var i = 0; i < elems.length; i++){
-			if(hasClass(elems[i],className)){
-				nodes.push(elems[i]);
-			}	
+function removeClass(elem,className){
+	var classNames;
+	if(!(classNames = getClass(elem))) return false;
+	//var classNames = getClass(elem);
+	for(var i = classNames.length - 1; i >= 0; i--){
+		if(classNames[i] === className){
+			classNames.splice(i,1);
+			console.log(classNames)
 		}
-		return nodes;
+	}
+	//console.log(classNames);
+	elem.className = classNames.join(' ');
+}
+
+/*
+ * addClass():添加元素的样式
+ *
+ */
+function addClass(elem,classNames){
+	if(!(elem = $(elem))) return false;
+	elem.className += (elem.className?' ':'') + classNames;
+	/*
+	var classes = getClass(elem);
+	classes.push(classNames.split(/\s+/g));
+	console.log(classes);
+	elem.className = classes.join(' ');
+	*/
+}
+
+/*
+ * toggleClass():变换元素样式
+ *
+ */
+function toggleClass(elem,className){
+	if(!(elem = $(elem))) return false;
+	if(hasClass(elem,className)){
+		removeClass(elem,className);
+	}else{
+		addClass(elem,className);
 	}
 }
 
+/*
+ * setActiveStyleSheet():切换备用样式表
+ *
+ */
+function setActiveStyleSheet(url,title){
+	var links = document.getElementsByTagName('link'),a;
+	for(var i = 0; (s = links[i]); i++){
+		if(s.rel.indexOf('style') != -1){
+			s.disabled = true;
+			if(s.getAttribute('title') && s.getAttribute('title') == title) s.disabled = false;
+		}
+	}
+}
+
+/*
+ * getStyleSheet():获得样式表
+ * url表示样式表的路径或文件名+路径。例如url可以为/skin/common.css，也可以是/skin/，如果是空字符串，则返回所有的样式表
+ *
+ */
+function getStyleSheets(url,media){
+	var sheets = [],s;
+	for(var i = 0; (s = document.styleSheets[i]); i++){
+		if(url?(s.href?(s.href.indexOf(url) == -1):true):false){
+			//sheets.splice(i,1);   因为document.styleSheets不是数组，而是有item()方法的Object，所以不能使用数组的方法。
+			//console.log(s?document.styleSheets[i]:1);
+			continue;
+		}else{
+			if(media){
+				//console.log(11);
+				media = media.replace(/,\s*/,',');
+				//console.log(media);
+				var sheetMedia;
+				//console.log(typeof(s.media.mediaText));
+				if(typeof(s.media.mediaText)){
+					//console.log(s.media.mediaText);
+					sheetMedia = s.media.mediaText.replace(/,\s*/,','); // DOM的方式
+					//console.log(s.media.mediaText);
+					sheetMedia = sheetMedia.replace(/,\s*$/,''); // Safari的bug
+				}else{
+					sheetMedia = s.media.replace(/,\s*/,','); // MSIE的方式
+				}
+				if(media != sheetMedia){
+					//sheets.splice(i,1);
+					continue;
+				}
+			}
+		}
+		sheets.push(s);
+	}
+	return sheets;
+}
+
+/*
+ * addStyleSheet():添加样式表
+ * url表示添加的样式表的相对路径
+ * title表示title属性
+ * media表示媒体类型，可选参数
+ */
+function addStyleSheet(url,title,media){
+	var link = document.creatElement('link');
+	link.setAttribute('href',url);
+	link.setAttribute('rel','stylesheet');
+	link.setAttribute('title',title?title:'');
+	link.setAttribute('media',media);
+	link.setAttribute('type','text/css');
+	document.getElementsByTagName('head')[0].appendChild(link);
+}
+/*
+ * removeStyleSheet():移除样式表
+ * url表示将要移除的样式表的相对路径
+ * media表示媒体类型，可选参数
+ */
+function removeStyleSheet(url,media){
+	var links = document.getElementsByTagName('link');
+	//console.log(links);
+	for(var i = 0; (s = links[i]); i++){
+		if(s.getAttribute('href').indexOf(url) != -1 && (media?(s.getAttribute('media') == media):true)){
+			s.parentNode.removeChild(s);
+		}
+	}
+}
+
+/*
+ * editeCSSRule():编辑样式规则
+ *
+ */
+function editCSSRule(selector,styles,url,media){
+	var sheets = getStyleSheets(url,media);
+	for(var i = 0; i < sheets.length; i++){
+		var cssRules = sheets[i].cssRules || sheets[i].rules;
+		if(!cssRules) continue;
+		for(var j = 0; j < cssRules.length; j++){
+			if(selector.toUpperCase() == cssRules[j].selector.toUpperCase()){
+				for(var prop in styles){
+					if(!styles.hasOwnProperty(prop)) continue;
+					cssRules[j].style[camlize(prop)] = styles[prop];
+					console.log('done');
+				}
+			}
+		}
+	}
+}
+
+/*
+ * addCSSRule():添加CSS样式
+ *
+ */
+
+function addCSSRule(selector,styles,index,url,media){
+	var declaration = '';
+	var sheets = getStyleSheets(url,media);
+	for(var prop in styles){
+		if(!styles.hasOwnProperty(prop)){
+			continue;
+		}else{
+			declaration += prop + ':' + styles[prop] + ';';
+		}
+	}
+	for(var i = 0; i < sheets.length; i++){
+		var cssRules = sheets[i].cssRules || sheets[i].rules;
+		if(sheets[i].insertRule){
+			var newIndex = ((parseInt(index) >=0) ? index : cssRules.length);
+			sheets[i].insertRule(selector + '{' + declaration + '}',newIndex);
+			console.log(1);
+		}else if(sheets[i].addRule){
+			var newIndex = index >= 0 ? index : cssRules.length;
+			sheets[i].addRule(selector,declaration,newIndex);
+			console.log(2);
+		}
+	}
+}
+ 
 /*
  * addEvent():给元素添加事件监听
  * elem表示要监听的元素
