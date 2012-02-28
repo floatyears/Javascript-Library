@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>MouseEvent</title>
+	<style type="text/css">
+	div{margin:10px;height:100px;width:100px;}
+	.move{background:cyan;}
+	.drag{background:green;}
+	</style>
+	<script type="text/javascript" src="../library.js"></script>
+	<script type="text/javascript">
+	window.onload = function(){
+		var move = getByClassName('move')[0];
+		addEvent(move,'mousemove',function(e){
+			var e = getEvent(e);
+			var position = getMousePosition(e);
+			setStyleById(this,{'position':'relative','left':(position['x']-50)+'px','top':(position['y']-50)+'px'});
+			console.log('move');
+		});
+		var drag = getByClassName('drag')[0];
+		addEvent(drag,'mousedown',function (e){
+			addEvent(this,'mousemove',mouseMove);
+			var button = getMouseButton(e);
+			console.log(button);
+		});
+		addEvent(drag,'mouseup',function(e){
+			deleteEvent(this,'mousemove',mouseMove);
+		})
+		function mouseMove(e){
+			var e = getEvent(e);
+			var position = getMousePosition(e);
+			setStyleById(this,{'position':'relative','left':(position['x']-50)+'px','top':(position['y']-150)+'px'});
+			//console.log('move');
+		}
+		
+	}
+	</script>
+</head>
+<body>
+	<div class="move"></div>
+	<div class="drag"></div>
+</body>
+</html>

@@ -5,7 +5,7 @@
 
 /*
  * $():
- * »ñÈ¡Ò»¸ö»òÕßÒ»×éDOM½Úµã£¬¿É´«Èë²ÎÊıÎªid»òÕßDOM½Úµã£¬Ö§³Ö¶à¸ö²ÎÊıµÄ´«µİ¡£
+ * è·å–ä¸€ä¸ªæˆ–è€…ä¸€ç»„DOMèŠ‚ç‚¹ï¼Œå¯ä¼ å…¥å‚æ•°ä¸ºidæˆ–è€…DOMèŠ‚ç‚¹ï¼Œæ”¯æŒå¤šä¸ªå‚æ•°çš„ä¼ é€’ã€‚
  */
 function $(){
 	var elems = [];
@@ -25,8 +25,8 @@ function $(){
 }
 
 /*
- * camlize():½«Öµ±äÎªÍÕ·åÊ½
- * ÀıÈç:'word-word'×ª»¯Îª'wordWord'
+ * camlize():å°†å€¼å˜ä¸ºé©¼å³°å¼
+ * ä¾‹å¦‚:'word-word'è½¬åŒ–ä¸º'wordWord'
  */
 function camlize(prop){
 	return prop.replace(/\-(\w)/g,function(strMatch,p1){
@@ -35,9 +35,9 @@ function camlize(prop){
 }
 
 /*
- * uncamlize():½«Öµ±äÎª¼ä¸ôÊ½
- * sep£º¼ä¸ô·û£¬Èç¹ûÃ»ÓĞ¶¨Òå£¬ÔòÊ¹ÓÃÄ¬ÈÏµÄ'-'
- * ÀıÈç:'wordWord'×ª»¯Îª'word-word'
+ * uncamlize():å°†å€¼å˜ä¸ºé—´éš”å¼
+ * sepï¼šé—´éš”ç¬¦ï¼Œå¦‚æœæ²¡æœ‰å®šä¹‰ï¼Œåˆ™ä½¿ç”¨é»˜è®¤çš„'-'
+ * ä¾‹å¦‚:'wordWord'è½¬åŒ–ä¸º'word-word'
  */
 function uncamlize(prop,sep){
 	return prop.replace(/[A-Z]/g,function(strMatch){
@@ -46,10 +46,10 @@ function uncamlize(prop,sep){
 }
 
 /*
- * getStyle():»ñµÃÔªËØµÄ×îÖÕÑùÊ½
- * elem±íÊ¾²Ù×÷µÄÔªËØ
- * props±íÊ¾Òª»ñÈ¡µÄÊôĞÔ¡£ÀıÈç£º['background-color','height']
- * pseudoEl±íÊ¾Î±ÔªËØ£¬ÀıÈçgetStyle(elem,['height'],':before')
+ * getStyle():è·å¾—å…ƒç´ çš„æœ€ç»ˆæ ·å¼
+ * elemè¡¨ç¤ºæ“ä½œçš„å…ƒç´ 
+ * propsè¡¨ç¤ºè¦è·å–çš„å±æ€§ã€‚ä¾‹å¦‚ï¼š['background-color','height']
+ * pseudoElè¡¨ç¤ºä¼ªå…ƒç´ ï¼Œä¾‹å¦‚getStyle(elem,['height'],':before')
  */
 function getStyle(elem,props,pseudoEl){
 	var styles = {};
@@ -68,16 +68,16 @@ function getStyle(elem,props,pseudoEl){
 }
 
 /*
- * setStyleById():¸ù¾İ$()º¯ÊıµÃµ½µÄÔªËØÀ´ÉèÖÃÑùÊ½
- * elem±íÊ¾²Ù×÷µÄÔªËØ¡£
- * styles±íÊ¾ÒªÉèÖÃµÄÑùÊ½Öµ¡£ÀıÈç£ºsetStyle(elem,{'background-color':'black'})
+ * setStyleById():æ ¹æ®$()å‡½æ•°å¾—åˆ°çš„å…ƒç´ æ¥è®¾ç½®æ ·å¼
+ * elemè¡¨ç¤ºæ“ä½œçš„å…ƒç´ ã€‚
+ * stylesè¡¨ç¤ºè¦è®¾ç½®çš„æ ·å¼å€¼ã€‚ä¾‹å¦‚ï¼šsetStyle(elem,{'background-color':'black'})
  */
 function setStyleById(elem,styles){
 	if(!(elem = $(elem))) return false;
 	for(var prop in styles){
 		if(!styles.hasOwnProperty(prop)) continue;
 		if(elem.style.setProperty){
-			elem.style.setProperty(camlize(prop),styles[prop],'important');
+			elem.style.setProperty(camlize(prop),styles[prop],null);
 			//console.log(camlize(prop));
 		}else{
 			elem.style[camelize(prop)] = styles[prop];
@@ -86,9 +86,9 @@ function setStyleById(elem,styles){
 }
 
 /*
- * setStyleByClassName()£»¸ù¾İ´«ÈëµÄÀàÃûÉèÖÃÑùÊ½
- * className±íÊ¾ÀàÃû
- * styles±íÊ¾ÑùÊ½Öµ¡£ÀıÈç£ºsetStyle(elem,{'background-color':'black'})
+ * setStyleByClassName()ï¼›æ ¹æ®ä¼ å…¥çš„ç±»åè®¾ç½®æ ·å¼
+ * classNameè¡¨ç¤ºç±»å
+ * stylesè¡¨ç¤ºæ ·å¼å€¼ã€‚ä¾‹å¦‚ï¼šsetStyle(elem,{'background-color':'black'})
  */
 function setStyleByClassName(className,styles){
 	if(!(elems = getByClassName(className))) return false;
@@ -98,8 +98,8 @@ function setStyleByClassName(className,styles){
 }
 
 /*
- * getChildren():»ñÈ¡½ÚµãÀàµÄ×ÓÔªËØ
- * elem£ºÒª»ñÈ¡×ÓÔªËØµÄ½Úµã¡£
+ * getChildren():è·å–èŠ‚ç‚¹ç±»çš„å­å…ƒç´ 
+ * elemï¼šè¦è·å–å­å…ƒç´ çš„èŠ‚ç‚¹ã€‚
  */
 function getChildren(elem){
 	var elems = [];
@@ -112,9 +112,9 @@ function getChildren(elem){
 }
 
 /*
- * hasClass():¼ì²âÄ³¸öÔªËØÊÇ·ñº¬ÓĞÏàÓ¦ÀàÃû
- * elem±íÊ¾Òª¼ì²âµÄÔªËØ
- * className±íÊ¾ÀàÃû
+ * hasClass():æ£€æµ‹æŸä¸ªå…ƒç´ æ˜¯å¦å«æœ‰ç›¸åº”ç±»å
+ * elemè¡¨ç¤ºè¦æ£€æµ‹çš„å…ƒç´ 
+ * classNameè¡¨ç¤ºç±»å
  */
 function hasClass(elem,className){
 	classes = elem.className.split(/\s+/g);
@@ -127,9 +127,9 @@ function hasClass(elem,className){
 }
 
 /*
- * getByClassName():Í¨¹ıÀàÃûÀ´»ñÈ¡ÔªËØ
- * className±íÊ¾ÀàÃû
- * elem±íÊ¾ÒªÒªÈ¡µÃµÄÔªËØµÄÉÏÏÂÎÄ¡£Ä¬ÈÏÎªdocument
+ * getByClassName():é€šè¿‡ç±»åæ¥è·å–å…ƒç´ 
+ * classNameè¡¨ç¤ºç±»å
+ * elemè¡¨ç¤ºè¦è¦å–å¾—çš„å…ƒç´ çš„ä¸Šä¸‹æ–‡ã€‚é»˜è®¤ä¸ºdocument
  */
 function getByClassName(className,elem){
 	elem = elem || document;
@@ -147,16 +147,16 @@ function getByClassName(className,elem){
 }
 
 /*
- * addEvent():¸øÔªËØÌí¼ÓÊÂ¼ş¼àÌı
- * elem±íÊ¾Òª¼àÌıµÄÔªËØ
- * type±íÊ¾ÊÂ¼şÀàĞÍ¡£ÀıÈç:'mouseover'
- * func±íÊ¾ÊÂ¼ş¼àÌıº¯Êı¡£
+ * addEvent():ç»™å…ƒç´ æ·»åŠ äº‹ä»¶ç›‘å¬
+ * elemè¡¨ç¤ºè¦ç›‘å¬çš„å…ƒç´ 
+ * typeè¡¨ç¤ºäº‹ä»¶ç±»å‹ã€‚ä¾‹å¦‚:'mouseover'
+ * funcè¡¨ç¤ºäº‹ä»¶ç›‘å¬å‡½æ•°ã€‚
  */
 function addEvent(elem,type,func){
 	if(elem.attachEvent){
 		elem['e'+type+func] = func;
-		elem[type+func] = function(){elem['e'+type+func](window.event);}
-		elem.attachEvent('on'+type,elem[type+func]);
+		//elem[type+func] = function(){elem['e'+type+func](window.event);}
+		elem.attachEvent('on'+type,function(){elem['e'+type+func](window.event);});
 	}else if(elem.addEventListener){
 		elem.addEventListener(type,func,false);
 	}else{
@@ -165,6 +165,141 @@ function addEvent(elem,type,func){
 	//return elem.attachEvent?elem.attachEvent('on'+type,func):elem.addEventListener(type,func);
 }
 
+/*
+ * deleteEvent()ï¼šåˆ æ‰å…ƒç´ ä¸Šçš„äº‹ä»¶
+ *
+ *
+ */
+function deleteEvent(elem,type,func){
+	if(elem.detachEvent){
+		//elem['d'+type+func] = func;
+		elem.detachEvent('on'+type,func);
+	}else if(elem.removeEventListener){
+		elem.removeEventListener(type,func);
+	}
+}
+
+/*
+ * addLoadEvent:å¢åŠ DOMContentLoadäº‹ä»¶ã€‚
+ */
+function addLoadEvent(LoadEvent,waitForImages){
+	if(waitForImages){
+		addEvent(window,'load',LoadEvent);
+	}
+	var init = function(){
+		if(arguments.callee.done){
+			return;
+		}
+		arguments.callee.done = true;
+		LoadEvent.apply(document,arguments);
+	}
+	if(document.addEventListner){
+		addEvent(document,'DOMContentLoaded',LoadEvent);
+		return;
+	}
+	if(/WebKit/i.test(navigator.userAgent)){
+		var _loadId = setInterval(function(){
+			if(/load|complete/i.test(document.readyState)){
+				init();
+				clearInterval(_loadId);
+			}
+		},100)
+	}
+	if(checkIE()){
+		var script = document.createElement('script');
+		script.src = 'javascript:void(0)';
+		document.getElementsByTagName('body')[0].appendChild(script);
+		if(script.onreadStatechange){
+			script.onreadystatechange = function(){
+				if(this.readyState == 'complete'){
+					init();
+					console.log('IE');
+				}
+			}
+		}
+	}
+}
+
+/*
+ * checkIE():æ£€æŸ¥IEæµè§ˆå™¨ç‰ˆæœ¬
+ */
+function checkIE(){
+	var undef, version = 3, div = document.createElement('div'), all = div.getElementsByTagName('i');
+	while(div.innerHTML = '<!--[if gt IE' + (++version) + ']><i></i><![endif]-->',all[0]);
+	return version > 4 ? version:undef;
+}
+
+/*
+ * getTarget():è·å–eventå¯¹è±¡åŠtargetå±æ€§ã€‚
+ * 
+ */
+function getEvent(e){
+	var event = e || window.event;
+	event.target = event.target || event.srcElement;
+	if(event.target.nodeType == document.TEXT_NODE){ //è§£å†³Safariçš„bug
+		event.target = event.target.parentNode;
+	}
+	return event;
+}
+
+/*
+ *getMouseButton():è·å–å•å‡»çš„é¼ æ ‡æŒ‰é”®
+ *
+ *
+ */
+function getMouseButton(e){
+	var e = getEvent(e);
+	var button = {
+		'left' : false,
+		'middle' : false,
+		'right' : false
+	}
+	if(e.toString && e.toString().indexOf('MouseEvent') != -1){
+		switch(e.button){
+			case 0:
+				button['left'] = true;break;
+			case 1:
+				button['middle'] = true;break;
+			case 2:
+				button['right'] = true;break;
+			defualt:
+				break;
+		}
+	}else if(e.button){
+		switch(e.button){
+			case 1: button['left'] = true;break;
+			case 2: button['right'] = true;break;
+			case 3: button['left'] = true;button['right'] = true;break;
+			case 4: button['middle'] = true;break;
+			case 5: button['left'] = true;button['middle'] = true;break;
+			case 6: button['middle'] = true;button['right'] = true;break;
+			case 7: button['left'] = true;button['middle'] = true;button['right'] = true;break;
+		}
+	}
+	else{
+		return false;
+	}
+	return button;
+}
+
+/*
+ * getMousePosition():è·å–é¼ æ ‡çš„ä½ç½®ã€‚
+ *
+ *
+ */
+function getMousePosition(e){
+	var e = getEvent(e);
+	var x = e.pageX || (e.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft));
+	var y = e.pageY || (e.clientY + (document.documentElement.scrollTop || document.body.scrollTop));
+	return {'x':x,'y':y}
+}
+
+/*
+ * getKeyPressed():è·å–æŒ‰é”®çš„é”®å€¼
+ *
+ *
+ */
+ 
 /*
  * animate:
  * elem: the element to animate.
@@ -210,22 +345,16 @@ function animate(elem,from,to,dur,fx,func,fps){
 	//console.log('');
 }
 
-function animateSec(elem,from,to,change,fx,func){
-	
-}
-
-
-
 function clearAnimate(elem,animateId){
 	clearInterval(animateId);
 	Queue.deQueue(elem,animateId);
 }
 
 /*
- * Queue:¶ÓÁĞ¶ÔÏó
- * checkQueue()£º¼ì²éÏàÓ¦µÄÔªËØºÍanimateIdÊÇ·ñÔÚ¶ÓÁĞÖĞ¡£
- * addQueue()£º½«ÏìÓ¦µÄÔªËØºÍanimateIdÖµÌí¼Óµ½¶ÓÁĞÖĞ¡£
- * deQueue():½«animateIdµ¯³ö¶ÓÁĞ²¢Í£Ö¹¶¯»­¡£
+ * Queue:é˜Ÿåˆ—å¯¹è±¡
+ * checkQueue()ï¼šæ£€æŸ¥ç›¸åº”çš„å…ƒç´ å’ŒanimateIdæ˜¯å¦åœ¨é˜Ÿåˆ—ä¸­ã€‚
+ * addQueue()ï¼šå°†å“åº”çš„å…ƒç´ å’ŒanimateIdå€¼æ·»åŠ åˆ°é˜Ÿåˆ—ä¸­ã€‚
+ * deQueue():å°†animateIdå¼¹å‡ºé˜Ÿåˆ—å¹¶åœæ­¢åŠ¨ç”»ã€‚
  */
 var Queue = (function(){
 	//var queues = [];
