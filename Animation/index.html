@@ -30,14 +30,14 @@
 					//var event = e || window.event;
 					var ul = getByClassName('drop',this)[0];
 					//animate(ul,{'height':'0px','width':'104px'},{'height':'120px','width':'104px'},1,Easing.easeInQuad);
-					animate(ul,{'height':''},{'height':'120px'},1,Easing.easeLine);
+					animate(ul,{'height':''},{'height':'120px'},1,Easing.easeOutSine);
 					//setStyleById(ul,{'display':'block'});
 				});
 				addEvent(lis[i],'mouseout',function(e){
 					var ul = getByClassName('drop',this)[0];
 					//setStyleById(ul,{'display':'none'});
 					//animate(ul,{'height':'','width':''},{'height':'0px','width':'0px'},2,Easing.easeInQuad);
-					animate(ul,{'height':''},{'height':'0px'},1,Easing.easeLine);
+					animate(ul,{'height':''},{'height':'0px'},1,Easing.easeOutSine);
 				});
 			}
 			var box0 = getByClassName('box')[0],box1 = getByClassName('box')[1],box2 = getByClassName('box')[2];

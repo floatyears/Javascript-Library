@@ -97,15 +97,26 @@ function uncamlize(prop,sep){
  * pseudoEl表示伪元素，例如getStyle(elem,['height'],':before')
  */
 function getStyle(elem,props,pseudoEl){
-	var styles = {};
+	var styles = {},defaultView;
+	if(!(elem = $(elem)) && !props) return false;
+	//if(typeof(props).toLowerCase() == 'array' )
 	if(elem.currentStyle){
 		for(var i = 0; i < props.length; i++){
+			/*
+			if(!(styles[props[i]] = elem.style[camlize(props[i])])){
+				if(!(styles[props[i]] = elem.currentStyle[props[i]])) continue;
+			}*/
 			if(!(styles[props[i]] = elem.currentStyle[props[i]])) continue;
 		}
 	}
-	if(window.getComputedStyle){
+	if(defaultView = window.getComputedStyle || document.defaultView.getComputedStyle){
 		for(var i = 0; i < props.length; i++){
-			if(!(styles[props[i]] = window.getComputedStyle(elem,pseudoEl).getPropertyValue(props[i]))) continue;
+			/*
+			if(!(styles[props[i]] = elem.style[camlize(props[i])])){
+				if(!(styles[props[i]] = window.getComputedStyle(elem,pseudoEl).getPropertyValue(props[i]))) continue;
+			}
+			*/
+			if(!(styles[props[i]] = defaultView(elem,pseudoEl).getPropertyValue(props[i]))) continue;
 		}
 		
 	}
@@ -513,17 +524,28 @@ function getMousePosition(e){
  *
  *
  */
+function getKeyPressed(e){
+	e = getEvent(e);
+}
  
+ 
+
 /*
- * animate:
+ * animate():
  * elem: the element to animate.
  * from: object,the element's starting properties,or has no value
  * to: object,the element's ending state.
  */
 
-function animate(elem,from,to,dur,fx,func,fps){
+function animate(elem,from,to,dur,fx,func,fps,_addqueue){
 	fps = fps || 25;
-	var sep = parseInt(1000/fps),curTime = 0, times = parseInt(fps*dur), changes = {}, curVal = {},dur = dur*1000;
+	var sep = parseInt(1000/fps),curTime = 0, times = parseInt(fps*dur), changes = {}, curVal = {},dur = dur*1000,origin = {};
+	origin['from'] = from;
+	origin['to'] = to;
+	origin['dur'] = dur;
+	origin['fx'] = fx;
+	origin['func'] = func;
+	origin['fps'] = fps;
 	for(var prop in to){
 		var props = [];
 		props.push(prop);
@@ -531,7 +553,11 @@ function animate(elem,from,to,dur,fx,func,fps){
 		to[prop] = parseInt(to[prop].replace(/\D*/g,''));
 		changes[prop] = parseInt(to[prop] - from[prop]);
  	}
-	if(getStyle(elem,['display'])['display'] == 'none'){setStyleById(elem,{'display':'block'});}
+
+	if(getStyle(elem,['display'])['display'] == 'none'){
+		setStyleById(elem,{'display':'block'});
+		origin['display'] = 'none';
+	}
 	/*
 	if(Queue.checkQueue(elem)){
 		console.log('the queue is not empty');
@@ -539,8 +565,14 @@ function animate(elem,from,to,dur,fx,func,fps){
 	}*/
 	var animateId = setInterval(function(){
 		if(curTime > dur) {
-			clearAnimate(elem,animateId)
-			console.log('animate was dequeue');
+			Queue.deQueue(elem,animateId);
+			//Queue.checkQueue(elem)
+			//var data = Queue.originData(elem)
+			//if(data['display'] == 'none' && data['to']['height'] == '0px'){
+			if(getStyle(elem,['height'])['height'] == '0px'){ //这个判断，比较特殊。一般性的判断暂时还没想出来。
+				setStyleById(elem,{'display':'none'});
+			}
+			//console.log('animate was dequeue');
 		}
 		
 		/*
@@ -555,13 +587,7 @@ function animate(elem,from,to,dur,fx,func,fps){
 		setStyleById(elem,curVal);
 		curTime += sep;
 	},sep);
-	Queue.addQueue(elem,animateId,dur);
-	//console.log('');
-}
-
-function clearAnimate(elem,animateId){
-	clearInterval(animateId);
-	Queue.deQueue(elem,animateId);
+	Queue.addQueue(elem,animateId,origin);//console.log('');
 }
 
 /*
@@ -574,37 +600,34 @@ var Queue = (function(){
 	//var queues = [];
 	var queue = [];
 	return {
-		queue:queue,
+		//queue:queue,
 		checkQueue:function(elem){
-			var n = 0;
-			for(var i = 0, len = queue.length; i < len; i++){
-				if(queue[i] && queue[i].element == elem){
-					n++;
-				}
+			for(var e = 0; e < queue.length; e++){
+				if(queue[e].element == elem) return e;
 			}
-			if(n > 1){
-				n = 0;
-				return true;
-			}
+			return;
 		},
-		addQueue:function(elem,animateId,dur,delay){
-			var n = 0;
-			if(queue.length > 0){
-				for(var i = 0, len = queue.length; i < len; i++){
-					if(queue[i].element == elem){
-						n++;
+		originData:function(elem){
+			return queue[this.checkQueue(elem)]['origin'];
+		},
+		addQueue:function(elem,animateId,origin){
+			var e = this.checkQueue(elem);
+			if(e || e == 0){
+				//for(var i = 0, len = queue.length; i < len; i++){
+					//var this.checkQueue(elem);
+					if(queue[e].element == elem){ //每个元素在queue数组中占一个位置，相同的元素只推入animateId
 						//console.log(len);
-						queue[i].animateId.push(animateId);
-						var a = queue[i].animateId;
-						clearInterval(a[a.length-2]);
+						queue[e].animateId.push(animateId); //推入当前的animateId
+						//clearInterval(queue[i].animateId[queue[i].animateId.length-2]); //将前面的animateId清除
+						this.deQueue(elem,queue[e].animateId[queue[e].animateId.length-2])
 						return;
 						//console.log(elem.childNodes.length);
 					}
 					//console.log(len);
-				}
-				queue.push({element:elem,animateId:[animateId],duration:dur});
+				//}
+				//queue.push({'element':elem,'animateId':[animateId],'origin':origin});	
 			}else{
-				queue.push({element:elem,animateId:[animateId],duration:dur});
+				queue.push({'element':elem,'animateId':[animateId],'origin':origin});
 			}
 			
 			
@@ -617,16 +640,25 @@ var Queue = (function(){
 				/*console.log(Queue.queue);*/
 			
 			
-			//console.log(queue);
+			console.log(queue);
 			//queue[animateId] = elem;
 			//setTimeout(deQueue(animateId),delay?delay+dur:dur);
 		},
-		deQueue:function(elem,animateId){
-			for(var i = 0, len = queue.length; i < len; i++){
-				if(queue[i] && queue[i].elem == elem){
+		deQueue:function(elem,animateId,index){
+			for(var i = 0; i < queue.length; i++){
+				if(queue[i] && queue[i].element == elem){
 					clearInterval(animateId);
-					queue[i].animateId.splice(i,1);
-					console.log(Queue.queue);
+					if(index || index == 0){ //如果传入Id，就简化操作
+						queue[i].animateId.splice(index,1);
+					}else{
+						for(var j = 0, aq = queue[i].animateId; j< aq.length; j++){
+							if(aq[j] == animateId){
+								queue[i].animateId.splice(j,1);
+							}
+						}
+					}
+					//queue[i].animateId.shift();
+					//console.log(Queue.queue);
 				}
 			}
 			//queue[elem] = null;
@@ -779,3 +811,23 @@ Easing =
 	}
 }
 
+/*
+ * getType():获取数据类型
+ *
+ *
+ */
+function getType(obj){
+	var _obj = obj
+	var type = typeof(_obj);
+	if(type == 'object'){
+		if(type == null) return 'null';
+		for(var t = 0, a; a = ['array','regexp','date'][t]; t++){
+			//console.log(_obj.constructor.toString().toLowerCase());
+			if(_obj.constructor.toString().toLowerCase().indexOf(a) != -1) return a;
+		}
+		return 'object';
+	}
+	else{
+		return type;
+	}
+}
