@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>Ajax</title>
+	<link rel="stylesheet" href="../common.css" />
+	<script type="text/javascript" src="../library.js"></script>
+	<script type="text/javascript">
+		window.onload = function(){
+			
+			var text = document.getElementById('text');
+			var returnDiv1 = getByClassName('return')[0],returnDiv2 = getByClassName('return')[1],returnDiv3 = getByClassName('return')[2];
+			var form1 = document.getElementsByTagName('form')[0],form2 = document.getElementsByTagName('form')[1],form3 = document.getElementsByTagName('form')[2];
+			var request1 = createXHR();
+			form1.onsubmit = function(e){
+				
+				e = getEvent(e);
+				e.preventDefault();
+				
+				request1.open('GET','ajax.php',true);
+				request1.send(text.value);
+			}
+			request1.onreadystatechange = function(){
+					if(request1.readyState == 4 && request1.status == '200'){
+						returnDiv1.innerHTML += request1.responseText;
+					}
+				}
+			form2.onsubmit = function(e){
+				var request2 = createXHR();
+				e = getEvent(e);
+				e.preventDefault();
+				request2.onreadystatechange = function(){
+					if(request2.readyState == 4 && request2.status == '200'){
+						returnDiv2.innerHTML += request2.responseText;
+					}
+				}
+				request2.open('GET','ajax.php',true);
+				request2.send(text.value);
+			}
+			
+			//console.log(r);
+			var jsrequest = new JSHttpRequest();
+			jsrequest.onreadystatechange = function(){
+				if(jsrequest.readyState == 4 && jsrequest.status == 1){
+					returnDiv3.innerHTML += jsrequest.responseJSON.message;
+				}
+			}
+			form3.onsubmit = function(e){
+				e = getEvent(e);
+				e.preventDefault();
+				jsrequest.open('ajaxJS.php');
+				jsrequest.send(null);
+			}
+			
+		}
+	</script>
+</head>
+<body>
+	<form action="ajax.php" id="form">
+		<textarea name="return" id="text" cols="30" rows="10"></textarea>
+		<input type="submit" value="提交" />
+		<input type="reset" value="取消" />
+	</form>
+	<p>XHR返回结果</p>
+	<div class="return"></div>
+	
+	<form action="ajax.php" id="form">
+		<textarea name="return" id="text" cols="30" rows="10"></textarea>
+		<input type="submit" value="提交" />
+		<input type="reset" value="取消" />
+	</form>
+	<p>XHR返回结果</p>
+	<div class="return"></div>
+	
+	<form action="ajaxJS.php" id="form">
+		<textarea name="return" id="text" cols="30" rows="10"></textarea>
+		<input type="submit" value="提交" />
+		<input type="reset" value="取消" />
+	</form>
+	<p>XHR返回结果</p>
+	<div class="return"></div>
+</body>
+</html>
