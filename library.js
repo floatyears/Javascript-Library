@@ -859,38 +859,6 @@ function createXHR(){
 	}
 }
 
-/*
- * stateChangeListener():监听XHR对象的变化
- *
- */
-function stateChangeListener(request){
-	if(!request){
-		return new Error('No request object');
-	}else{
-		switch(request.readyState){
-			case 0: //尚未初始化
-				try{
-					func1();
-				}catch(e){
-					continue;
-				}
-				break;
-			case 1: //载入中
-				break;
-			case 2: //载入完成
-				break;
-			case 3: //交互
-				break;
-			case 4: //完成
-				if(request.status == 200){ //状态码200，对responsText或responsXML进行处理
-					
-				}else{
-					
-				}
-				break;
-		}
-	}
-}
 
 /*
  * ajaxRequest():XHR请求函数
@@ -969,8 +937,8 @@ function ajaxRequest(url,options){
 	}
 	request.open(options['method'],url,true);
 	request.setRequestHeader('X-Ajax-Request','AjaxRequest');
-	request.send(options['send']);
-	//return request;
+	//request.send(options['send']);
+	return request;
 }
 
 var jsHttpRequestCount = 0;
@@ -1409,3 +1377,226 @@ if (!JSON) {
         };
     }
 }());
+
+
+function makeCallback(method,target){
+	return function(){method.apply(target,arguments);}
+}
+/*
+ * actionPager:一个用来基于hash触发注册的方法的URL hash侦听器
+ * 用于解决浏览历史的问题
+ */
+var actionPager = {
+	lashHash:'',
+	callbacks:[],
+	safariHistory:false,
+	msieHistory:false,
+	ajaxifyClassName:'',
+	ajaxifyRoot:'',
+	init:function(ajaxifyClass,ajaxifyRoot,startingHash){
+		this.ajaxifyClassName = ajaxifyClass || 'ADSAction';
+		this.ajaxifyRoot = ajaxifyRoot || '';
+		if(/Safari/i.test(navigator.userAgent)){
+			this.safariHistory = [];
+		}else if(/MSIE/i.test(navigator.userAgent)){
+			this.msieHistory = document.createElement('iframe');
+			this.msieHistory.setAttribute('id','msieHistory');
+			this.msieHistory.setAttribute('name','msieHistory');
+			setStyleById(this.msieHistory,{
+				'width':'100px',
+				'height':'100px',
+				'border':'1px solid black',
+				'visibility':'visible',
+				'zIndex':'-1'
+			});
+			document.body.appendChild(this.msieHistory);
+			this.msieHistory = frames['msieHistory'];
+		}
+		this.ajaxifyLinks();
+		var location = this.getLocation();
+		if(!location.hash && !startingHash){
+			startingHash = 'start';
+		}
+		ajaxHash = this.getHashFromURL(location.hash) || startingHash;
+		this.addBackButtonHash(ajaxHash);
+		var watchCallback = makeCallback(this.watchLocationForChange,this);
+		window.setInterval(watcherCallback,200);
+	},
+	ajaxifyLinks:function(){
+		links = getByClassName(this.ajaxifyClassName);
+		for(var i = 0; i < links.length; i++){
+			if(hasClass(links[i],'ADSActionPagerModified')){
+				continue;
+			}
+			links[i].setAttribute('href',this.convertURLToHash(links[i].getAttribute('href')));
+			addClass(links[i],'ADSActionPagerModified');
+			addEvent(links[i],'click',function(){
+				if(this.href && this.href.indexOf('#') > -1){
+					actionPager.addBackButtonHash(actionPager.getHashFromURL(this.href));
+				}
+			});
+		}
+	},
+	addBackButtonHash:function(ajaxHash){
+		if(!ajaxHash) return false;
+		if(this.safariHistory !== false){
+			if(this.safariHistory.length == 0){
+				this.safariHistory[window.history.length] = ajaxHash;
+			}else{
+				this.safariHistory[window.history.length+1] = ajaxHash;
+			}
+			return false;
+		}else if(this.msieHistory !== false){
+			this.msieHistory.document.execCommand('Stop');
+			this.msieHistory.location.href = '/fakepage?hash=' + ajaxHash + '&title=' + document.title;
+			return true;
+		}else{
+			var timeoutCallback = makeCallback(function(){
+				if(this.getHashFromURL(window.location.href) != ajaxHash){
+					window.location.replace(location.href + '#' +ajaxHash);
+				}
+			},this);
+			setTimeout(timeoutCallback,200);
+			return true;
+		}
+	},
+	watchLocationForChange:function(){
+		var newHash;
+		if(this.safariHistory !== false){
+			if(this.safariHistory[history.length]){
+				newHash = this.safariHistory[history.length];
+			}
+		}else if(this.msieHistory !== false){
+			newHash = this.msieHistory.location.href.split('&')[0].split('=')[1];
+		}else if(location.hash != ''){
+			newHash = this.getHashFromURL(window.location.href);
+		}
+		if(newHash && this.lastHash != newHash){
+			if(this.msieHistory !== false && this.getHashFromURL(window.location.href) != newHash){
+				location.hash = newHash;
+			}
+			try{
+				this.executeListeners(newHash);
+				this.ajaxifyLinks();
+			}catch(e){
+				alert(e);
+			}
+			this.lastHash = newHash;
+		}
+	},
+	register:function(regex,method,context){
+		var obj = {'regex':regex};
+		if(context){
+			obj.callback = function(matches){
+				method.apply(context,matches);
+			}
+		}else{
+			obj.callback = function(matches){
+				method.apply(window,matches);
+			}
+		}
+		this.callback.push(obj)
+	},
+	convertURLToHash:function(url){
+		if(!url){
+			return '#';
+		}else if(url.indexOf('#')!=-1){
+			return url.split('#')[1];
+		}else{
+			if(url.indexOf('://')!=-1){
+				url = url.match(/:\/\/[^\/]+(.*)/)[1];
+			}
+			return '#' + url.substr(this.ajaxifyRoot.length)
+		}
+	},
+	getHashFromURL:function(){
+		if(!url || url.indexOf("#") == -1){return '';}
+		return url.split("#")[1];
+	},
+	getLocation:function(){
+		if(!window.location.hash){
+			var url = {domain:null,hash:null}
+			if(window.location.href.indexOf("#") > -1){
+				parts = window.location.href.split("#")[1];
+				url.domain = parts[0];
+				url.hash = parts[1];
+			}else{
+				url.domain = window.location;
+			}
+			return url;
+		}
+		return window.location;
+	},
+	executeListener:function(hash){
+		for(var i in this.callback){
+			if((matches = hash.match(this.callback[i].regex))){
+				this.callback[i].callback(matches);
+			}
+		}
+	}
+}
+
+/*
+ * clone():复制对象
+ *
+ */
+function clone(obj){
+	if(typeof obj != 'object') return obj;
+	if(typeof obj == null) return obj;
+	var newObj = {};
+	for(var i in obj){
+		obj[i] = newObj[i];
+	}
+	return newObj;
+}
+
+/*
+ * ajaxQueue():ajax队列
+ *
+ */
+var requestQueue = [];
+function ajaxQueue(url,options,queue){
+	options = queue || 'default';
+	options = clone(options) || {};
+	if(!requestQueue[queue]) requestQueue[queue] = [];
+	var userCompleteListener = options.completeListener;
+	
+	options.completeListener = function(){
+		if(userCompleteListener){
+			userCompleteListener.apply(this,arguments);
+		}
+		requestQueue[queue].shift();
+		
+		if(requestQueue[queue][0]){
+			var q = requestQueue[queue][0].requset.send(requestQueue[queue][0].send)
+		}
+	}
+
+	var userErrorListener = options.errorListener;
+	options.errorListener = function(){
+		if(userErrorListener){
+			userErrorListener.apply(this,arguments);
+		}
+		requestQueue[queue].shift();
+		if(requestQueue[queue].length){
+			var q = requestQueue[queue].shift();
+			q.request.abort();
+			var fakeRequest = {};
+			fakeRequest.status = 0;
+			fakeRequest.readyState = 4;
+			fakeRequest.responseText = null;
+			fakeRequest.responseXML = null;
+			fakeReqeust.statusText = 'A request in the queue recieved an error';
+			q.error.apply(fakeRequest);
+		}
+	}
+	requestQueue[queue].push({
+		request:ajaxRequest(url,options),
+		send:options.send,
+		error:options.errorListener
+	});
+	if(reqeustQueue[queue].length == 1){
+		ajaxRequest(url,options);
+		send(options.send);
+	}
+}
