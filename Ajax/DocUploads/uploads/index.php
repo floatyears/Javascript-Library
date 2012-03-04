@@ -306,7 +306,7 @@ function getStatusAPC($key) {
 	$response = false;
 	
 	// will return false if not found
-	if(!$status = apc_fetch('upload_'.$_GET['key'])) {
+	if($status = apc_fetch('upload_'.$_GET['key'])) {
 		/*
 		status {
 		"total":2676099,

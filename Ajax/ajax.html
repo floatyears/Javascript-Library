@@ -4,6 +4,9 @@
 	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
 	<title>Ajax</title>
 	<link rel="stylesheet" href="../common.css" />
+	<style type="text/css">
+	body{padding:20px;}
+	</style>
 	<script type="text/javascript" src="../library.js"></script>
 	<script type="text/javascript">
 		window.onload = function(){
@@ -16,27 +19,33 @@
 				
 				e = getEvent(e);
 				e.preventDefault();
-				
-				request1.open('GET','ajax.php',true);
-				request1.send(text.value);
-			}
-			request1.onreadystatechange = function(){
-					if(request1.readyState == 4 && request1.status == '200'){
-						returnDiv1.innerHTML += request1.responseText;
-					}
+				function successQueue(){
+					//if(request1.readyState == 4 && request1.status == '200'){
+						returnDiv1.innerHTML += arguments[0];
+					//}
 				}
+				ajaxQueue('ajax.php',{'htmlResponseListener':successQueue,'completeListener':function(){
+					console.log('complete');
+				}},'Queue1');
+				//request1.open('GET','ajax.php',true);
+				//request1.send(text.value);
+			}
+			//request1.onreadystatechange = 
+
 			form2.onsubmit = function(e){
 				//var request2 = createXHR();
 				e = getEvent(e);
 				e.preventDefault();
-				var request2 = getRequestObject('ajax.php');
-				request2.onreadystatechange = function(){
-					if(request2.readyState == 4 && request2.status == '200'){
-						returnDiv2.innerHTML += request2.responseText;
-					}
+				function success(){
+					//if(request2.readyState == 4 && request2.status == '200'){
+						returnDiv2.innerHTML += arguments[0];
+					//}
 				}
+				ajaxRequest('ajax.php',{'htmlResponseListener':success});
+				//request2.onreadystatechange = 
+				
 				//request2.open('GET','ajax.php',true);
-				request2.send(text.value);
+				//request2.send(text.value);
 			}
 			
 			//console.log(r);
@@ -57,22 +66,24 @@
 	</script>
 </head>
 <body>
+	<p>下面三个例子，第一和第三是在submit出发函数外面声明了的request对象。第二例是在函数内声明的，这样每次点击都会生成一个request对象，不过没有队列。</p>
+	<p>下面的例子增加了队列，可以第三例相比较</p>
 	<form action="ajax.php" id="form">
 		<textarea name="return" id="text" cols="30" rows="10"></textarea>
 		<input type="submit" value="提交" />
 		<input type="reset" value="取消" />
 	</form>
 	<p>XHR返回结果</p>
-	<div class="return"></div>
-	
+	<div class="return"></div><br />
+	<p>第二例，验证了Http头，只有通过ajaxRequest()发送的请求，才会返回Hello Everybody：</p>
 	<form action="ajax.php" id="form">
 		<textarea name="return" id="text" cols="30" rows="10"></textarea>
 		<input type="submit" value="提交" />
 		<input type="reset" value="取消" />
 	</form>
 	<p>XHR返回结果</p>
-	<div class="return"></div>
-	
+	<div class="return"></div><br />
+	<p>第三例，使用了JSON来进行跨域请求，不过因为这是本地示例，没有真正的跨域：</p>
 	<form action="ajaxJS.php" id="form">
 		<textarea name="return" id="text" cols="30" rows="10"></textarea>
 		<input type="submit" value="提交" />

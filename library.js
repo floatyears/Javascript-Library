@@ -897,27 +897,27 @@ function getRequestObject(url,options){
 					switch(mimeType){
 						case 'text/html':
 							if(options['htmlResponseListener']){
-								options['htmlResponseListener'].apply(request,request.responseText);
+								options['htmlResponseListener'].call(request,request.responseText);
 							}
 							break;
 						case 'text/xml':
 						case 'application/xml':
 						case 'application/xthml+xml':
 							if(options['xmlResponseListener']){
-								options['xmlResponseListener'].apply(request,request.responseXML);
+								options['xmlResponseListener'].call(request,request.responseXML);
 							}
 							break;
 						case 'text/javascript':
 						case 'application/javascript':
 							if(options['jsResponseListener']){
-								options['jsResponseListener'].apply(request,request.responseText);
+								options['jsResponseListener'].call(request,request.responseText);
 							}
 							break;
 						case 'application/json':
 							if(options['jsonResponseListener']){
 								try{
 									var json = JSON.parse(request.responseText);
-									options['jsonResponseListener'].apply(request,json);
+									options['jsonResponseListener'].call(request,json);
 								}
 								catch(e){
 									var json = false;
@@ -1554,7 +1554,7 @@ function clone(obj){
 	if(typeof obj == null) return obj;
 	var newObj = {};
 	for(var i in obj){
-		obj[i] = newObj[i];
+		newObj[i] = obj[i];
 	}
 	return newObj;
 }
@@ -1563,9 +1563,9 @@ function clone(obj){
  * ajaxQueue():ajax队列
  *
  */
-var requestQueue = [];
+var requestQueue = {};
 function ajaxQueue(url,options,queue){
-	options = queue || 'default';
+	queue = queue || 'default';
 	options = clone(options) || {};
 	if(!requestQueue[queue]) requestQueue[queue] = [];
 	var userCompleteListener = options.completeListener;
@@ -1574,10 +1574,11 @@ function ajaxQueue(url,options,queue){
 		if(userCompleteListener){
 			userCompleteListener.apply(this,arguments);
 		}
-		requestQueue[queue].shift();
 		
+		requestQueue[queue].shift();
 		if(requestQueue[queue][0]){
-			var q = requestQueue[queue][0].requset.send(requestQueue[queue][0].send)
+			//ajaxRequest(url,options);
+			requestQueue[queue][0].request.send(requestQueue[queue][0].send)
 		}
 	}
 
@@ -1600,11 +1601,12 @@ function ajaxQueue(url,options,queue){
 		}
 	}
 	requestQueue[queue].push({
-		request:getRequestObject(url,options),
-		send:options.send,
-		error:options.errorListener
+		'request':getRequestObject(url,options),
+		'send':options.send,
+		'error':options.errorListener
 	});
-	if(reqeustQueue[queue].length == 1){
-		ajaxReqeust(url,options);
+	if(requestQueue[queue].length == 1){
+		ajaxRequest(url,options);
+		//requestQueue[queue][0].request.send(requestQueue[queue][0].send);
 	}
 }
