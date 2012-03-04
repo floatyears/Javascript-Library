@@ -26,15 +26,16 @@
 					}
 				}
 			form2.onsubmit = function(e){
-				var request2 = createXHR();
+				//var request2 = createXHR();
 				e = getEvent(e);
 				e.preventDefault();
+				var request2 = getRequestObject('ajax.php');
 				request2.onreadystatechange = function(){
 					if(request2.readyState == 4 && request2.status == '200'){
 						returnDiv2.innerHTML += request2.responseText;
 					}
 				}
-				request2.open('GET','ajax.php',true);
+				//request2.open('GET','ajax.php',true);
 				request2.send(text.value);
 			}
 			

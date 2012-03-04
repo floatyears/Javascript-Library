@@ -12,7 +12,7 @@ function $(){
 	for(var i = 0; i < arguments.length; i++){
 		var elem = arguments[i];
 		if(typeof elem == "string"){
-			elem = document.getElementsById(elem);
+			elem = document.getElementById(elem);
 		}
 		
 		if(arguments.length == 1){
@@ -861,18 +861,18 @@ function createXHR(){
 
 
 /*
- * ajaxRequest():XHR请求函数
+ * getRequestObject():XHR请求函数
  * url为请求的url地址
  * options可包含的键有：options['method']，请求方法；options['send']，请求发送的内容；options['nosendListener']，未调用send方法的事件监听函数；
  * options['noloadListener']：未接收到响应的事件监听函数；options['loadingListener']，正在加载的事件监听函数；
  * options['htmlResponseListener']，options['xmlResponseListener']，options['jsResponseListener']，options['jsonResponseListener']：对应的返回对象的处理函数；
  * options['completeListener']，完成请求的监听函数；options['errorListener']，错误处理函数。
  */
-function ajaxRequest(url,options){
+function getRequestObject(url,options){
 	var request = createXHR();
 	options = options || [];
-	options['method'] = options['method'] || GET;
-	option['send'] = options['send'] || null;
+	options['method'] = options['method'] || 'GET';
+	options['send'] = options['send'] || null;
 	request.onreadystatechange = function(){
 		switch(request.readyState){
 			case 1: // 调用了open，尚未调用send
@@ -916,12 +916,12 @@ function ajaxRequest(url,options){
 						case 'application/json':
 							if(options['jsonResponseListener']){
 								try{
-									var json = JSON.parse(request.responseText)
+									var json = JSON.parse(request.responseText);
+									options['jsonResponseListener'].apply(request,json);
 								}
 								catch(e){
 									var json = false;
 								}
-								options['jsonResponseListener'].apply(request,json);
 							}
 							break;
 					}
@@ -939,6 +939,15 @@ function ajaxRequest(url,options){
 	request.setRequestHeader('X-Ajax-Request','AjaxRequest');
 	//request.send(options['send']);
 	return request;
+}
+
+/*
+ * ajaxRequest():
+ *
+ */
+function ajaxRequest(url,options){
+	var request = getRequestObject(url,options);
+	request.send(options.send);
 }
 
 var jsHttpRequestCount = 0;
@@ -1591,12 +1600,11 @@ function ajaxQueue(url,options,queue){
 		}
 	}
 	requestQueue[queue].push({
-		request:ajaxRequest(url,options),
+		request:getRequestObject(url,options),
 		send:options.send,
 		error:options.errorListener
 	});
 	if(reqeustQueue[queue].length == 1){
-		ajaxRequest(url,options);
-		send(options.send);
+		ajaxReqeust(url,options);
 	}
 }
