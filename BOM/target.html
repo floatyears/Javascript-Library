@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>target示例</title>
+	<script type="text/javascript" src="../library.js"></script>
+	<script type="text/javascript">
+		window.onload = function(){
+			var targetVal = getByClassName('targetVal');
+			var form1 = document.getElementsByTagName('form')[1];
+			var text = targetVal[0].innerHTML;
+			addEvent(targetVal[1],'change',function(){
+				targetVal[0].innerHTML = text + this.value;
+				form1.setAttribute('target',this.value);
+			})
+		}
+	
+	</script>
+</head>
+<body>
+<p class="target"></p>
+<form action="">
+	<label for="targetVal" class="targetVal">请输入target的值（frame的name属性或者_self,_parent,_top,_blank），当前target的值为：</label>
+	<input type="text" class="targetVal" name="targetVal"/>
+</form>
+<form action="http://www.w3school.com.cn/example/html5/demo_form.asp?fname=&lname=" target="_top">
+  First name: <input type="text" name="fname" /><br />
+  Last name: <input type="text" name="lname" /><br />
+  <input type="submit" value="提交" />
+</form>
+
+</body>
+</html>

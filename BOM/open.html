@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>open函数</title>
+	<script type="text/javascript" src="../library.js"></script>
+	<script type="text/javascript">
+		window.onload = function(){
+			var a = getByClassName('open');
+			addEvent(a[0],'click',function(e){
+				e = getEvent(e);
+				e.preventDefault();
+				window.open('BOM.html','leftFram','height=100,width=200,top=100,left=50');
+				console.log('open');
+			});
+			addEvent(a[1],'click',function(e){
+				e = getEvent(e);
+				e.preventDefault();
+				window.open('BOM.html','leftFrame','height=100,width=200,top=100,left=50',true);
+				console.log('open');
+			});
+		}
+	</script>
+</head>
+<body>
+	<a href="#" class="open">点击打开一个新窗口</a><br />
+	<a href="#" class="open">点击在leftFrame中打开一个窗口</a><br />
+	<a href="target.html" class="open" target="topFrame">点击在topFrame中打开一个窗口</a>
+</body>
+</html>

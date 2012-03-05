@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>关于BOM相关方法的一些例子</title>
+	<script type="text/javascript" src="../library.js"></script>
+	<script type="text/javascript">
+		window.onload = function(){
+			var divs = getByClassName('sample');
+			var returnVal = getByClassName('return')[0];
+			addEvent(divs[0],'click',function(e){
+				e = getEvent(e);
+				e.preventDefault();
+				window.moveTo(100,100);
+				window.moveBy(100,100);
+				window.resizeTo(100,100);
+				window.resizeBy(100,0);
+				console.log('clicked');
+				returnVal.innerHTML += 'left:'+ (window.screenLeft || window.screenX) + '\r' + 'top:' + (window.screenTop || screenY) + '\r' 
+										+ 'height:' + (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) + '\r' 
+										+ 'width:' + (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) + '\r' 
+										+ 'window\'s name:' + window.name + '\r'; 
+			});
+			var open = getByClassName('open')[0];
+			open.innerHTML += window.opener ? window.opener.name : 'the window has no attibute named opener';
+		}
+	</script>
+</head>
+<body>
+	<a href="blank.html" target="_self">target为_top</a>
+	<div class="sample">点击我显示当前信，如果使用window.open方法打开的窗口，还能进行移动和改变大小</div>
+	<p class="return">返回内容：</p>
+	<p class="open">widnow.opener:</p>
+</body>
+</html>

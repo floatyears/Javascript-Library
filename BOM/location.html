@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>location</title>
+	<script type="text/javascript" src="../library.js"></script>
+	<script type="text/javascript">
+		window.onload = function(){
+			var url = location.href;
+			var a = getByClassName('location');
+			addEvent(a[0],'click',function(e){
+				e = getEvent(e);
+				e.preventDefault();
+				var hash = Math.floor(Math.random()*1000);
+				location.href = url + "#" + hash;
+			});
+			addEvent(a[1],'click',function(e){
+				e = getEvent(e);
+				e.preventDefault();
+				var hash = Math.floor(Math.random()*1000);
+				var newUrl = url + "#" + hash;
+				location.replace(newUrl);
+			});
+			addEvent(a[2],'click',function(e){
+				e = getEvent(e);
+				e.preventDefault();
+				history.back();
+			});
+			addEvent(a[3],'click',function(e){
+				e = getEvent(e);
+				e.preventDefault();
+				history.forward();
+			})
+			addEvent(a[4],'click',function(e){
+				e = getEvent(e);
+				e.preventDefault();
+				location.reload();
+			})
+			addEvent(a[5],'click',function(e){
+				e = getEvent(e);
+				e.preventDefault();
+				location.reload(true);
+			})
+			
+		}
+	</script>
+</head>
+<body>
+	<a href="#" class="location">单击改变url的hash</a><br />
+	<a href="#" class="location">单击改变url的hash，但使用replace方法</a><br />
+	<a href="#" class="location">返回</a><br />
+	<a href="#" class="location">前进</a><br />
+	<a href="#" class="location">重载页面</a><br />
+	<a href="#" class="location">重载页面（reload(true)）</a><br />
+</body>
+</html>

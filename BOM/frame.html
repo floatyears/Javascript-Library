@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>FRAME的一些例子</title>
+	<style type="text/css">
+	frame{border:2px red solid;}
+	frameset{background:#ccc;}
+	</style>
+	<script type="text/javascript" src="../library.js"></script>
+</head>
+<frameset rows="160,*">
+	<frame src="BOM.html" frameborder="0" name="topFrame"></frame>
+	<frameset cols="30%,70%">
+		<frame src="blank.html" frameborder="0" name="leftFrame"></frame>
+		<frameset cols="50%,50%">
+			<frame src="target.html" frameborder="0" name="rightFrame_1"></frame>
+			<frame src="open.html" frameborder="0" name="rightFrame_2"></frame>
+		</frameset>
+		
+	</frameset>
+</frameset>
+</html>
