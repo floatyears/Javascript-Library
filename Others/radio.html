@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title></title>
+	<style type="text/css">
+	
+	p{width:20px;height:20px;border:2px black solid;display:inline-block;}
+	input:checked+p{border:2px red solid;}
+	input.selected{border:2px red solid;}
+	</style>
+</head>
+<body>
+<form action="#">
+	<label for="blue"><input type="radio" name="shoe" id="blue"/><p class="shoe selected"></p></label>
+	<label for="yellow"><input type="radio" name="shoe" id="yellow"/><p class="shoe"></p></label>
+	<label for="red"><input type="radio" name="shoe" id="red"/><p class="shoe"></p></label>
+</form>
+</body>
+</html>
+<style type="text/css">
+input{display:none;}
+p{width:20px;height:20px;border:2px black solid;display:inline-block;}
+input:checked+p{border:2px red solid;}
+input.selected{border:2px red solid;}
+</style>
+
+<form action="#">
+	<label for="blue"><input type="radio" name="shoe" id="blue"/><p class="shoe selected"></p></label>
+	<label for="yellow"><input type="radio" name="shoe" id="yellow"/><p class="shoe"></p></label>
+	<label for="red"><input type="radio" name="shoe" id="red"/><p class="shoe"></p></label>
+</form>
+
+之列了两部分主要的代码。考虑到数据提交，使用了表单和radio。同时涉及到选择，所以使用了label，考虑选择的样式，所以在label中嵌套了一个p，可以将图片放入p中。考虑到优雅降级的问题，我使用了css3的伪元素，对于不兼容的浏览器如IE6，可以使用js来实现（例如选中之后添加一个selected的class）。
+15013246847
+http://floatyears.info
+floatyears@floatyears.info

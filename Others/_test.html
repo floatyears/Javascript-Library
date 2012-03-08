@@ -1,0 +1,76 @@
+<html>
+ <head>
+  <title> New Document </title>
+  <script type="text/javascript">
+  
+  function check(){
+	sizeOf=0;//图片大小
+	var pic= document.getElementById("pic");//获取input=file 的ID
+	var picPath=pic.value;
+	var size=checkSize(pic);//判断大小
+	var formate=checkFormate(picPath);//判断格式
+	if(picPath == "" && picPath == null)
+		{alert("不能为空");}
+	else if(!formate){
+			pic.value="";
+			pic.focus();
+			alert("格式不对,请上传jpg，gif或png格式");
+		}
+	else if(!size){
+				pic.value="";
+				pic.focus();
+				alert("文件大小为："+Math.round(sizeOf/1024)+"kb，必须小于100Kb");
+			}
+	else {alert("上传成功");}
+}
+//判断上传图片是否大于10kb
+function checkSize(fileObj){
+		var ie=!-[1,];//判断是否为IE浏览器
+		var max=1024*10;//最大为10KB
+		if(ie){
+			var img=new Image();
+			img.src=fileObj.value;
+			while(img.readyState!='complete')
+			//img.onreadystatechange=function(){
+				if(img.readyState=='complete'){
+					sizeOf=img.fileSize;
+					console.log(sizeOf);
+				}
+			//}
+		}else{
+			sizeOf=fileObj.files[0].size;
+			console.log(sizeOf);
+			}
+		if(max>sizeOf)
+			return true;
+		else 
+			return false;
+	}	
+//判断格式
+function checkFormate(filePath) { 
+	var point = filePath.lastIndexOf(".");
+	var type = filePath.substr(point);
+	if(type==".jpg"||type==".gif"||type==".png"){
+		return true;
+	}else
+		return false;		
+}		
+			
+  
+  
+  
+  </script>
+  
+  <style>
+  .input{border:1px solid red;}
+  
+  </style>
+ </head>
+
+ <body>
+ <form  action="#" method="post" />
+	<input type="file" id="pic" onchange="check()"/>
+ </form>
+ 
+ </body>
+</html>

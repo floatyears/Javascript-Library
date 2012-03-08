@@ -1640,7 +1640,7 @@ function hasPlugin(name){
 }
 
 /*
- * clien():检测用户代理字符串，包括浏览器，引擎，平台
+ * client():检测用户代理字符串，包括浏览器，引擎，平台
  *
  *
  */
@@ -1741,3 +1741,36 @@ function client(){
 		system:system
 	}
 }
+
+/*
+ * OOP部分
+ *
+ */
+
+ /*
+  * extend():使子类继承超类类
+  * superClass:表示超类
+  * subClass:表示子类
+  */
+ function extent(subClass,superClass){
+ 	var F = function(){};
+ 	F.prototype = superClass;
+ 	subClass.prototype = new F();
+ 	subClass.prototype.constructor = subClass;
+
+ 	//在子类中提供一个到超类的引用，这样就可以使用超类而不是超类原型中的属性或方法。
+ 	subClass.superClass = superClass;
+ 	if(superClass.prototype.constructor == Object.prototype.constructor){
+ 		superClass.prototype.constructor = superClass;
+ 	}
+ }
+
+ /*
+  * clone(obj):克隆一个函数
+  * obj:表示将要克隆的对象
+  */
+ function clone(obj){
+ 	var F = function(){};
+ 	F.prototype = obj;
+ 	return new F();
+ }
