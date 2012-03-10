@@ -1747,30 +1747,32 @@ function client(){
  *
  */
 
- /*
-  * extend():使子类继承超类类
-  * superClass:表示超类
-  * subClass:表示子类
-  */
- function extent(subClass,superClass){
- 	var F = function(){};
- 	F.prototype = superClass;
- 	subClass.prototype = new F();
- 	subClass.prototype.constructor = subClass;
+/*
+ * extend():使子类继承超类类
+ * superClass:表示超类
+ * subClass:表示子类
+ */
+function extend(subClass,superClass){
+	var F = function(){};
+	F.prototype = superClass;
+	subClass.prototype = new F();
+	subClass.prototype.constructor = subClass;
 
- 	//在子类中提供一个到超类的引用，这样就可以使用超类而不是超类原型中的属性或方法。
- 	subClass.superClass = superClass;
- 	if(superClass.prototype.constructor == Object.prototype.constructor){
- 		superClass.prototype.constructor = superClass;
- 	}
- }
+	//在子类中提供一个到超类的引用，这样就可以使用超类而不是超类原型中的属性或方法。
+	subClass.superClass = superClass;
+	if(superClass.prototype.constructor == Object.prototype.constructor){
+		superClass.prototype.constructor = superClass;
+	}
+}
 
- /*
-  * clone(obj):克隆一个函数
-  * obj:表示将要克隆的对象
-  */
- function clone(obj){
- 	var F = function(){};
- 	F.prototype = obj;
- 	return new F();
- }
+/*
+ * clone(obj):克隆一个函数，通过原想链机制，提供了所有继承而来的所有成员。这是原型式继承，继承的对象是obj。
+ * obj:表示将要克隆的对象
+ */
+function clone(obj){
+	var F = function(){};
+	F.prototype = obj;
+	return new F();
+}
+
+

@@ -1,0 +1,22 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>Design Pattern:Factory</title>
+	<style type="text/css"></style>
+	<script type="text/javascript" src="../../library.js"></script>
+	<script type="text/javascript" src='factory.js'></script>
+	<script type="text/javascript">
+		window.onload = function(){
+			var bicycleShop = new BicycleShop();
+			var acme = new AcmeBicycleFactory('The Lowride');
+			bicycleShop.sellBicycle(acme);
+			var general = new GeneralBicycleFactory('The Speedster');
+			bicycleShop.sellBicycle(general);
+		}
+	</script>
+</head>
+<body>
+	<div>请使用console查看输出结果</div>
+</body>
+</html>
