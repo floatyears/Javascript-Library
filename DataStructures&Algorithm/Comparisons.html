@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>Comparisons</title>
+	<script type="text/javascript">
+		function popArr (Arr,end,start) {
+			if(Arr[end] < Arr[start]){
+				Arr.shift();
+				Arr.unshift(Arr.pop());
+			}else{
+				Arr.pop();
+			}
+		}
+		function findMin(_aoArr){
+			var _nMin;
+			var len = _aoArr.length, mod = len % 8, j = Math.floor(len/8);
+			if(j > 0){
+				for(var i = len-1; i > mod; i--){
+					popArr(_aoArr,i,0);i--;
+					popArr(_aoArr,i,0);i--;
+					popArr(_aoArr,i,0);i--;
+					popArr(_aoArr,i,0);i--;
+					popArr(_aoArr,i,0);i--;
+					popArr(_aoArr,i,0);i--;
+					popArr(_aoArr,i,0);i--;
+					popArr(_aoArr,i,0);i--;
+				}
+			}
+			else if(mod != 0){
+				for(var i = mod -1; i > 0; i--){
+					popArr(_aoArr,i,0);
+				}
+			}
+			_nMin = _aoArr[0];
+			return _nMin;
+		}
+		window.onload = function(){
+			var returnVal = document.getElementById('returnVal');
+			var arr = [20,40,13,15,21,30,52,12,10,55,22,34];
+			returnVal.innerHTML = '数组为'+ arr.toString() + '，最小元素为：' + findMin(arr);
+			document.getElementById("submit").onclick = function(){
+				var inputArr = eval(document.getElementById('inputArr').value);
+				if(inputArr &&  inputArr.constructor.toString().toLowerCase().indexOf('array')){
+					arr = inputArr;
+				}else{
+					arr = [20,40,13,15,21,30,52,12,10,55,22,34];
+				}
+				returnVal.innerHTML = '数组为'+ arr.toString() + '，最小元素为：' + findMin(arr);
+			};
+		}
+
+	</script>
+</head>
+<body>
+	<h1>给定一个<span style="color:red">循环递增</span>数组，从里面找出最小的元素，当然最快最好。我自己的算法的时间复杂度是O(n)，当然这个n可以用达夫设备优化一下。</h1>
+	<p>请输入数组，如果没有输入则使用默认数组([20,40,13,15,21,30,52,12,10,55,22,34])：</p>
+	<textarea name="" id="inputArr" cols="30" rows="10" value=""></textarea>
+	<input type="button" id='submit' value='确定' />
+	<div id="returnVal"></div>
+</body>
+</html>

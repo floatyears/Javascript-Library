@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>BinaryTree</title>
+	<script type="text/javascript">
+		function searchPush (arr,n) {
+			for (var i = arr[n].length - 1; i >= 0; i--) {
+				if(arr[n][i] && arr[n][i].left){
+					arr[n+1] = arr[n+1]?arr[n+1] : [];
+					arr[n+1].push(arr[n][i].left);
+				}
+				if(arr[n][i].right){
+					arr[n+1] = arr[n+1]?arr[n+1] : [];
+					arr[n+1].push(arr[n][i].right);
+				}
+			};
+			if(arr[n+1]){
+				searchPush(arr,n+1)
+			}else{
+				return arr.length;
+			}
+			// body...
+		}
+		function depth(_aoRoot){
+			var _nDepth = 0;
+			var arr = [];
+			arr[0] = [];
+			arr[0].push(_aoRoot);
+			searchPush(arr,0);
+			_nDepth = arr.length;
+			console.log(_nDepth);
+			console.log(arr);
+			return _nDepth;
+		}
+		
+		var binObj = {
+			value:'1',
+			left:{
+				value:'2',
+				left:{
+					value:'3',
+					left:{
+						value:'4'
+					},
+					right:{
+						value:'5',
+						right:{
+							value:'6'
+						}
+					}
+				},
+				right:{
+					value:'3_1'
+				}
+			},
+			right:{
+				value:'2_1'
+			}
+		}
+		window.onload = function(){
+			var returnVal = document.getElementById('returnVal');
+			returnVal.innerHTML += depth(binObj);
+		}
+	</script>
+</head>
+<body>
+	<h1>面试的一道题：求二叉树{value:Number,left:object,right:Object}的深度，当时就掩面泪奔了。具体返回对象可以查看console输出。</h1>
+	<div id="returnVal">二叉树：<br />
+	binObj = {
+			value:'1',
+			left:{
+				value:'2',
+				left:{
+					value:'3',
+					left:{
+						value:'4'
+					},
+					right:{
+						value:'5',
+						right:{
+							value:'6'
+						}
+					}
+				},
+				right:{
+					value:'3_1'
+				}
+			},
+			right:{
+				value:'2_1'
+			}
+		}<br />
+		的深度是：</div>
+</body>
+</html>
