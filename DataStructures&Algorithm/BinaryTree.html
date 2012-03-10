@@ -4,13 +4,13 @@
 	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
 	<title>BinaryTree</title>
 	<script type="text/javascript">
-		function searchPush (arr,n) {
+		function searchPush (arr,n) { //这个方法的主要思路是将二叉树深度一样的节点放到数组中的同一个元素，然后遍历这个数组元素得到下一层节点。
 			for (var i = arr[n].length - 1; i >= 0; i--) {
-				if(arr[n][i] && arr[n][i].left){
+				if(arr[n][i] && arr[n][i].left){ //如果存在左节点就将将其推入下一个数组元素。
 					arr[n+1] = arr[n+1]?arr[n+1] : [];
 					arr[n+1].push(arr[n][i].left);
 				}
-				if(arr[n][i].right){
+				if(arr[n][i].right){ //如果存在右节点就将将其推入下一个数组元素。
 					arr[n+1] = arr[n+1]?arr[n+1] : [];
 					arr[n+1].push(arr[n][i].right);
 				}
@@ -65,7 +65,7 @@
 	</script>
 </head>
 <body>
-	<h1>面试的一道题：求二叉树{value:Number,left:object,right:Object}的深度，当时就掩面泪奔了。具体返回对象可以查看console输出。</h1>
+	<h1>求二叉树{value:Number,left:object,right:Object}的深度。具体返回对象可以查看console输出。</h1>
 	<div id="returnVal">二叉树：<br />
 	binObj = {
 			value:'1',

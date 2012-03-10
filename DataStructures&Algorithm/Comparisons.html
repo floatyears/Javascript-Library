@@ -4,7 +4,7 @@
 	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
 	<title>Comparisons</title>
 	<script type="text/javascript">
-		function popArr (Arr,end,start) {
+		function popArr (Arr,end,start) { //下面的思路就是将数组的第一个元素和最后一个元素相比较，如果得通过一些操作，将小的元素放到数组首位，将大的元素从数组中除去。
 			if(Arr[end] < Arr[start]){
 				Arr.shift();
 				Arr.unshift(Arr.pop());
@@ -16,7 +16,7 @@
 			var _nMin;
 			var len = _aoArr.length, mod = len % 8, j = Math.floor(len/8);
 			if(j > 0){
-				for(var i = len-1; i > mod; i--){
+				for(var i = len-1; i > mod; i--){ //达夫设备实现，在循环次数很多时效果比较大
 					popArr(_aoArr,i,0);i--;
 					popArr(_aoArr,i,0);i--;
 					popArr(_aoArr,i,0);i--;
