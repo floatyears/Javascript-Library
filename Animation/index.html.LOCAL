@@ -24,7 +24,7 @@
 		}
 		window.onload = function(){
 			init();
-			var menu = getByClassName('menu')[0],lis = getChildren(menu);
+			var menu = document.getElementsByClassName('menu')[0],lis = getChildren(menu);
 			for(var i = 0, len = lis.length; i < len; i++){
 				addEvent(lis[i],'mouseover',function(e){
 					//var event = e || window.event;
@@ -77,8 +77,8 @@
 			addEvent(box2,'mouseover',function(){
 				animateSec(box2);
 			});
+			var a = getStyleSheets('common.css','all');
 		}
-		
 	</script>
 </head>
 <body>
