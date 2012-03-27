@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>Command模式示例</title>
+	<script type="text/javascript" src='../../library.js'></script>
+	<script type="text/javascript" src='command2.js'></script>
+	<script type="text/javascript">
+		window.onload = function(){
+			//Implementation code
+			var body = document.getElementsByTagName('body')[0];
+			var cursor = new Cursor(400,400,body);
+
+			var upCommand = new MoveUp(cursor);
+			var downCommand = new MoveDown(cursor);
+			var leftCommand = new MoveLeft(cursor);
+			var rightCommand = new MoveRight(cursor);
+
+			var upButton = new CommandButton('Up',upCommand,body);
+			var downButton = new CommandButton('Down',downCommand,body);
+			var leftButton = new CommandButton('Left',leftCommand,body);
+			var rightButton = new CommandButton('Right',rightCommand,body);
+			var undoButton = new UndoButton('Undo',body,cursor);
+		}
+	</script>
+</head>
+<body>
+	
+</body>
+</html>

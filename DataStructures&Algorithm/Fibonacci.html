@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>Fibonacci</title>
+	<script type="text/javascript">
+		window.onload = function(){
+			var returnVal = document.getElementById('returnVal');
+			/*
+			for(var i = 1;i<30;i++){
+				
+				(function(i){
+					setTimeout(function(){
+						returnVal.innerHTML += Fib(i) + ' \b';
+					},1000);
+				})(i)
+				
+				
+				//returnVal.innerHTML += Fib(i) + 'i';
+			}
+			*/
+			function printFib(i){
+				setTimeout(function(){
+					var start = new Date();
+					returnVal.innerHTML += Fib(i) + ' \b';
+					var end = new Date();
+					if(i<50 && (end-start) < 100) printFib(i);
+					else alert('It comes to end Or has been executing too long.')
+				},1000);
+				i++;
+			};
+			printFib(1);
+			
+
+		}
+		var Fib = (function(){
+			var cache = {};
+			return function(n){
+				if(n>2){
+					if(!cache[n-1]) cache[n-1] = Fib(n-1);
+					if(!cache[n-2]) cache[n-2] = Fib(n-2);
+					if(!cache[n]){
+						cache[n] = cache[n-1] + cache[n-2];
+					}
+					return cache[n];
+				}
+				if(n>0){
+					if(n==1||n==2){
+						cache[n] = 1;
+						return 1;
+					}
+				}
+
+				//cache[n-1] = cache[n-1]?cache[n-1]:Fib(n-1);
+				//cache[n-2] = cache[n-2]?cache[n-2]:Fib(n-2);
+				//cache[n] = n<0 ? alert('n must be positive!'):
+					//(n ==1 || n == 2)?(cache[n] = 1):(cache[n-1]+cache[n-2])
+					//cache[n] = (cache[n-1]?cache[n-1]:Fib(n-1)+cache[n-2]?cache[n-2]:Fib(n-2));
+			}
+		})();
+	</script>
+</head>
+<body>
+	<div id="returnVal"></div>
+</body>
+</html>

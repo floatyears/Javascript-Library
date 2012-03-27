@@ -256,7 +256,7 @@ function setActiveStyleSheet(url,title){
 /*
  * getStyleSheet():获得样式表
  * url表示样式表的路径或文件名+路径。例如url可以为/skin/common.css，也可以是/skin/，如果是空字符串，则返回所有的样式表
- *
+ * media表示媒体类型
  */
 function getStyleSheets(url,media){
 	var sheets = [],s;
@@ -344,7 +344,10 @@ function editCSSRule(selector,styles,url,media){
 
 /*
  * addCSSRule():添加CSS样式
- *
+ * selector:表示类名
+ * styles:表示一个样式对象
+ * index:表示获取到的style sheets的索引
+ * url表示要获取的style sheets的url地址
  */
 
 function addCSSRule(selector,styles,index,url,media){
@@ -465,6 +468,33 @@ function getEvent(e){
 		event.target = event.target.parentNode;
 	}
 	return event;
+}
+
+/*
+ *stopPropagation():阻止事件冒泡
+ *
+ */
+function stopPropagation(e){
+	e = getEvent(e);
+	e.stopPropagation?e.stopPropagation():e.cancelBubble = true;
+}
+
+/*
+ *preventDefault():阻止默认事件
+ *
+ */
+function preventDefault(e){
+	e = getEvent(e);
+	e.preventDefault ? e.preventDefault() : e.returnValue = false;
+}
+
+/*
+ *stopEvent():阻止冒泡和默认事件
+ *
+ */
+function stopEvent(e){
+	stopPropagation(e);
+	preventDefault(e);
 }
 
 /*
@@ -1775,4 +1805,63 @@ function clone(obj){
 	return new F();
 }
 
+//Constructor
+var Interface = function(name,methods){
+	if(arguments.length!=2){
+		throw new Error('Interface constructor called with' + arguments.length + 'arguments, but expected exactly 2.');
+	}
+	this.name = name;
+	this.methods = [];
+	for(var i = 0, len = methods.length; i < len; i++){
+		if(typeof methods[i] !== 'string'){
+			throw new Error('Interface constructor expects method names to be' + 'passed in as a string.');
+		}
+		this.methods.push(methods[i]);
+	}
+}
 
+//Static class method
+Interface.ensureImplements = function(object){
+	if(arguments.length<2){
+		throw new Error('Interface constructor called with' + arguments.length + 'arguments, but expected at least 2.');
+	}
+	for(var i = 1, len = arguments.length; i < len; i++){
+		var interface = arguments[i];
+		if(interface.constructor !== Interface){
+			throw new Error('Function Interface.ensureImplements expects arguments' + 'two an above to be instance of Interface');
+		}
+		for(var j = 0, methodLen = interface.methods.length; j < methodLen; j++){
+			var method = interface.methods[j];
+			if(!object[method] || typeof object[method] !=='function'){
+				throw new Error('Function Interface.ensureImplements: '+ object + ' does not implement the ' + interface.name + 'interface. Method ' + method + ' was not found.');
+			}
+		}
+		
+	}
+}
+
+
+
+/*
+ * 动态加载JS
+ *
+ *
+ */
+function loadScript(url,callback){
+	var script = document.createElement('script');
+	script.type= 'text/javascript';
+	if(script.readyState){
+		script.onreadystatechange = function(){
+			if(script.readyState == 'loaded' || script.readyState == 'complete'){
+				script.onreadystatechange = null;
+				callback();
+			}
+		}
+	}else{
+		script.onload = function(){
+			callback();
+		}
+	}
+	script.url = url;
+	document.getElementsByTagName('head')[0].appendChild(script);
+}

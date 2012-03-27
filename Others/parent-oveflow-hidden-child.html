@@ -1,0 +1,22 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>子元素不被父级元素的overflow:hidden裁切</title>
+	<style type="text/css">
+		.parent{height:200px;width:200px;background-color: red;overflow: hidden;padding-top: 20px;}
+		.children{height:300px;width:100px;background-color: blue;position: absolute;top: 20px;}
+	</style>
+	<script type="text/javascript">
+		window.onload = function function_name (argument) {
+			// body...
+			
+		}
+	</script>
+</head>
+<body>
+	<div class="parent">父级元素
+		<div class="children">子元素</div>
+	</div>
+</body>
+</html>

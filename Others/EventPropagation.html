@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>事件冒泡</title>
+	<style type="text/css">
+		div{border:2px black solid;margin: 20px 0px 40px 0px;}
+	</style>
+	<script type="text/javascript" src='../library.js'></script>
+	<script type="text/javascript">
+		window.onload = function(){
+			var clicks = getByClassName('click');
+			var childClick = getByClassName('childClick')[0];
+			addEvent(clicks[1],'click',function(){
+				this.style.backgroundColor = 'green';
+			});
+			addEvent(childClick,'click',function(){
+				this.style.backgroundColor = 'cyan';
+			})
+		}
+	</script>
+</head>
+<body>
+	<div class="click">点击</div>
+	<div class="click">父级元素<div class='childClick'>子一级元素,点击向上传播事件</div></div>
+</body>
+</html>

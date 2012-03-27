@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>Javascript</title>
+	<link rel="stylesheet" href="../../common.css">
+	<style type="text/css">
+		.js{height:200px;width:200px;border:2px blue solid;margin: 20px 0px 40px 0px;}
+		.jsText{margin: 20px 0px 0px 40px;}
+		.tips{list-style-type: none;border:1px solid #666;background:#eee;}
+		.tips li:hover,.hover{background:green;color:#fff;}
+	</style>
+	<script type="text/javascript" src="../../library.js"></script>
+	<script type="text/javascript" src="cursor.js"></script>
+	<script type="text/javascript">
+		window.onload = function(){
+			var jsText = $('js'), execute = $('execute'),returnVal = $('returnVal');
+			var currStr = {};
+			addEvent(execute,'click',function(){
+				//window.open('#');
+				if(jsText.value){
+					executJS(jsText.value);
+				}else{
+					throw("There is something wrong with the code!")
+				}
+			});
+			function getStr(string,index){
+				//console.log('string:'+string);
+				if(!string) return;
+				//var start = string.indexOf(/\b/,index), end = string.lastIndexOf(/\b/,index);
+				//var start = /\b/.exec(string), end = /\b/.exec(string);
+				/*
+				var start = string.indexOf(' ',index), end = string.lastIndexOf(' ',index);
+				console.log('start:'+start+';'+'end:'+end);
+				return string.substring(start,end)
+				*/
+				var rightReg = /^([\w|\$|_]+)\b/i, leftReg = /\b([A-Za-z\$_][\w|\$|_]*)$/i;
+				rightReg.lastIndex = index;
+				var rightStr = string.substring(index);
+				//console.log('r:'+rightStr)
+				rightStr = rightReg.exec(rightStr);
+				//console.log('rightStr:'+rightStr);
+
+				var leftStr = string.substring(0,index);
+				//console.log('l:'+leftStr);
+				leftStr = leftReg.exec(leftStr);
+				//console.log('leftStr:'+leftStr);
+				//console.log('leftStr.index:'+string.substring(leftStr.index,leftStr.index+1));
+				//console.log(regStr.lastIndex);
+				var start = currStr.start = leftStr && (leftStr.index || leftStr.index == 0) ? leftStr.index : index;
+				var end = currStr.end = rightStr && (rightStr[1].length || rightStr[1].length == 0) ? index + rightStr[1].length : index;
+				currStr.all = string;
+				currStr.select = rightStr || leftStr ? (leftStr?leftStr[1]:'') + (rightStr?rightStr[1]:'') : null;
+				return {
+					string : currStr.select,
+					start : start,
+					end : end
+				}
+			}
+
+			function searchProp(obj,prop,_deep){
+				console.log('prop:'+prop);
+				if(!prop) return;
+				var props = [];
+				for(var i in obj){
+					//console.log(i.indexOf(prop));
+					if(i.indexOf(prop) == 0){
+						props.push(i);
+						continue;
+					}else{
+						if(_deep === true){
+							//console.log(i);
+							obj[i] ? searchProp(obj[i],prop) : null;
+						}
+
+					}
+					
+				}
+				console.log(props);
+				return props;
+
+			}
+
+			function select(elem,direction){
+				var lis = elem.getElementsByTagName('li');
+				var returnVal;
+				function addReturn(index,className){
+					addClass(lis[index],className);
+					returnVal = lis[index];
+				}
+				for(var length = lis.length, i = length-1;lis[i];i--){
+					if(hasClass(lis[i],'hover')) break;
+				}
+
+				//lis[i]?removeClass(lis[i],'hover'):
+				if(lis[i]){
+					removeClass(lis[i],'hover');
+					if(direction == 'up'){
+						i == 0 ? addReturn(length-1,'hover'):addReturn(i-1,'hover');
+						//return i==0?lis[length-1] : lis[i-1];
+					}else if(direction == 'down'){
+						i == (length-1) ? addReturn(0,'hover'):addReturn(i+1,'hover');
+						//return i == length -1? 0 : i+1;
+					}
+				}else if(!lis[i]){
+					direction == 'up' ? addReturn(length-1,'hover') :(direction == 'down' ? addReturn(0,'hover') : null);
+					//return lis[i];
+				}
+					
+				return returnVal;
+			}
+			function selectVal(){
+
+			}
+			var ul = document.createElement('ul');
+			document.getElementsByTagName('body')[0].appendChild(ul);
+			ul.className = 'tips';
+			ul.style.cssText = 'position:absolute;'
+			var returnLi;
+			function showTips(){
+				var index = getCursorIndex(jsText);
+				var strObj = getStr(jsText.value,index);
+				var str = strObj? strObj.string : null;
+				var props = searchProp(window,str);
+				var fragment = document.createDocumentFragment();
+				console.log(props);
+				if(!props) return;
+				//var fragment = document.createDocumentFragment();
+				for (var i = props.length - 1; i+1; i--) {
+					var li = document.createElement('li');
+					li.innerHTML = props[i];
+					fragment.appendChild(li);
+				}
+				console.log(ul);
+				var returnVal = $('returnVal');
+				returnVal.innerHTML = '';
+				ul.style.left = getCursorPos(jsText).left + 'px';
+				ul.style.top = getCursorPos(jsText).bottom + 'px';
+				//returnVal.appendChild(ul);
+				//document.getElementsByTagName('body')[0].removeChild(ul);
+				ul.innerHTML = '';
+				ul.appendChild(fragment);
+
+				console.log(getCursorPos(jsText));
+
+			}
+			addEvent(jsText,'keyup',function(e){
+				var e = getEvent(e);
+				var keyCode = e.keyCode;
+				//console.log(keyCode);
+				
+				switch(keyCode){
+					case 38:
+					preventDefault(e);
+					returnLi = select(ul,'up');
+					break;
+					case 40:
+					preventDefault(e);
+					returnLi = select(ul,'down');
+					break;
+					case 13:
+					preventDefault(e);
+					console.log(keyCode);
+					if(currStr.start < currStr.end && returnLi ){
+						console.log('enter');
+						jsText.value = currStr.all.substring(0,currStr.start) + returnLi.innerHTML + currStr.all.substring(currStr.end);
+						ul.innerHTML = '';
+					}
+					break;
+					default:
+					showTips();
+					break;
+				}
+			});
+			addEvent(jsText,'keydown',function(e){
+				var keyCode = e.keyCode;
+				switch(keyCode){
+					case 38:
+					case 40:
+					case 13:
+					if(ul.innerHTML){
+						preventDefault(e);
+						//if(currStr.start < currStr.end && returnLi ){
+						//console.log('enter');
+						//jsText.value = currStr.all.substring(0,currStr.start) + returnLi.innerHTML + currStr.all.substring(currStr.end)
+						//}
+					};
+				}
+			});
+			addEvent(jsText,'mouseup',showTips);
+			function executJS(val){
+				var script = document.createElement('script');
+				script.innerHTML = val;
+				document.getElementsByTagName('head')[0].appendChild(script);
+			}
+		}
+	</script>
+</head>
+<body>
+	<form action="#">
+		<textarea name=""  cols="30" rows="10" id="js" class="jsText"></textarea>
+		<input type="button" id="execute" value="运行" />
+	</form>
+	<!--<div id="js01" class="js">asdfasdg adsg adsg asdf</div>-->
+	<div id="returnVal"></div>
+</body>
+</html>
