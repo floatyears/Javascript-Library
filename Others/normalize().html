@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>normalize方法</title>
+	<script type="text/javascript">
+		window.onload = function(){
+			var elem = document.getElementById('elem');
+			console.log('最开始的子节点个数:'elem.childNodes.length);
+			elem.normalize();
+			console.log('第一次normalize，没有相邻的文本节点：'elem.childNodes.length);
+			elem.appendChild(document.createTextNode('f'));
+			console.log('添加一个新的文本节点之后子节点的长度:'elem.childNodes.length);
+			elem.normalize();
+			console.log('第二次normalize之后(有两个相邻的文本节点):'elem.childNodes.length);
+		}
+	</script>
+</head>
+<body>
+	<div id="elem">a
+		<span>1</span>b
+		<span>2</span>c
+		<span>3</span>d
+		<span>4</span>e
+	</div>
+	<div id="returnVal"></div>
+</body>
+</html>

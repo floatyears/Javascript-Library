@@ -1,0 +1,245 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>Javascript</title>
+	<link rel="stylesheet" href="../../common.css">
+	<style type="text/css">
+		.js{height:200px;width:200px;border:2px blue solid;margin: 20px 0px 40px 0px;}
+		.jsText{margin: 20px 0px 0px 40px;}
+		.tips{list-style-type: none;border:1px solid #666;background:#eee;}
+		.tips li:hover,.hover{background:green;color:#fff;}
+	</style>
+	<script type="text/javascript" src="../../library.js"></script>
+	<script type="text/javascript" src="cursor.js"></script>
+	<script type="text/javascript">
+		var jsConsole = (function(){
+			var console, executeButton, currStr = {},selectedTip;
+			var Tips = document.createElement('ul');
+			Tips.className = 'tips';
+			Tips.style.cssText = 'position:absolute;'
+			return {
+
+				//初始化，传入参数elem为要js输入的文本框元素，execute为执行按钮
+				init : function(elem,execute,options){
+					console = elem;
+					executeButton = execute;
+					document.getElementsByTagName('body')[0].appendChild(Tips);
+					this.addKeyEvent(console);
+				},
+
+				//获取当前光标所在的字符串，字符串以单词边界来限定。
+				getStr : function(string,index,_changeCurrStr){
+					if(!string) return;
+
+					//正则表达式，匹配两边的单词边界。
+					var rightReg = /^([\w|\$|_]+)\b/i, leftReg = /\b([A-Za-z\$_][\w|\$|_]*)$/i;
+					
+					//设定lastIndex属性，让光标右边的字符串匹配从光标所在字符串索引处开始
+					rightReg.lastIndex = index;
+					var rightStr = rightReg.exec(string.substring(index));
+
+					//光标的左边字符串执行匹配
+					var leftStr = leftReg.exec(string.substring(0,index));
+
+				
+					//当前所选字符串的开始位置。如果左边匹配得到字符串并且长度不为0，那么返回匹配得到的索引。
+					var start = leftStr && (leftStr.index || leftStr.index == 0) ? leftStr.index : index;
+					
+					//当前字符串结束位置。如果右边匹配得到字符串并且长度不为0，那么以字符串长度作为end的值。
+					var end = rightStr && (rightStr[1].length || rightStr[1].length == 0) ? index + rightStr[1].length : index;
+					
+					//console中的全部字符串。
+					
+					var currString = rightStr || leftStr ? (leftStr?leftStr[1]:'') + (rightStr?rightStr[1]:'') : null;
+					
+					//
+					if(!_changeCurrStr){
+						currStr.string = currString
+						currStr.all = string;
+						currStr.start = start;
+						currStr.end = end;
+					}
+					
+					
+					return {
+						string : currString,
+						start : start,
+						end : end
+					}
+				},
+
+				//搜索obj中的以prop开头的属性。
+				searchProp : function(obj,prop,_props,_deep){
+					//console.log('prop:'+prop);
+					
+					var props = [];
+					if(!_deep){
+						if(!prop) return;
+						if(prop === true){
+							for(var i in obj){
+							//console.log(i.indexOf(prop));
+								props.push(i);
+							}
+						}
+						for(var i in obj){
+							//console.log(i.indexOf(prop));
+							if(i.indexOf(prop) == 0){
+								props.push(i);
+								continue;
+							}
+						}
+					}else if(_props){
+						prop = prop ? prop : true;
+						var currObj = obj;
+						while(_props.length && currObj){
+							currObj = currObj[_props.shift()];
+						}
+						return arguments.callee(currObj,prop);
+					}
+					
+					//console.log(props);
+					return props;
+
+				},
+
+				//从Tips中选择一个作为值。
+				selectTip : function(elem,direction){
+					var lis = elem.getElementsByTagName('li');
+					var selectedTip;
+					function addReturn(index,className){
+						addClass(lis[index],className);
+						selectedTip = lis[index];
+					}
+					for(var length = lis.length, i = length-1;lis[i];i--){
+						if(hasClass(lis[i],'hover')) break;
+					}
+
+					if(lis[i]){
+						removeClass(lis[i],'hover');
+						if(direction == 'up'){
+							i == 0 ? addReturn(length-1,'hover'):addReturn(i-1,'hover');
+						}else if(direction == 'down'){
+							i == (length-1) ? addReturn(0,'hover'):addReturn(i+1,'hover');
+						}
+					}else if(!lis[i]){
+						direction == 'up' ? addReturn(length-1,'hover') :(direction == 'down' ? addReturn(0,'hover') : null);
+					}
+						
+					return selectedTip;
+				},
+
+				//执行js的方式
+				executJS : function(val){
+					var script = document.createElement('script');
+					script.innerHTML = val;
+					document.getElementsByTagName('head')[0].appendChild(script);
+				},
+
+				//显示代码提示
+				showTips : function(){
+					
+					var index = getCursorIndex(console);
+					var strObj = this.getStr(console.value,index);
+					var str = strObj? strObj.string : null;
+
+					var objArr = this.execObjStr(currStr.all,currStr.start-1);
+
+					var props = objArr && !objArr.length ? this.searchProp(window,str) : this.searchProp(window,str,objArr,true);
+					var fragment = document.createDocumentFragment();
+					
+
+					//console.log(props);
+					if(!props) return;
+
+					for (var i = props.length - 1; i+1; i--) {
+						var li = document.createElement('li');
+						li.innerHTML = props[i];
+						fragment.appendChild(li);
+					}
+					
+
+					var returnVal = $('returnVal');
+					returnVal.innerHTML = '';
+					var pos = getCursorPos(console);
+					Tips.style.left = pos.left + 'px';
+					Tips.style.top = pos.bottom + 'px';
+
+					//清空上一次的提示
+					Tips.innerHTML = '';
+					Tips.appendChild(fragment);
+
+					//console.log(getCursorPos(console));
+
+				},
+				addKeyEvent:function(consoleElem){
+					var _this = this;
+					addEvent(consoleElem,'keyup',function(e){
+						var e = getEvent(e);
+						var keyCode = e.keyCode;
+						//console.log(keyCode);
+						
+						switch(keyCode){
+							case 38:
+							preventDefault(e);
+							selectedTip = _this.selectTip(Tips,'up');
+							break;
+							case 40:
+							preventDefault(e);
+							selectedTip = _this.selectTip(Tips,'down');
+							break;
+							case 13:
+							preventDefault(e);
+							//console.log(keyCode);
+							if(currStr.start < currStr.end && selectedTip ){
+								//console.log('enter');
+								consoleElem.value = currStr.all.substring(0,currStr.start) + selectedTip.innerHTML + currStr.all.substring(currStr.end);
+								Tips.innerHTML = '';
+							}
+							break;
+							default:
+							_this.showTips();
+							break;
+						}
+					});
+					addEvent(consoleElem,'keydown',function(e){
+						var keyCode = e.keyCode;
+						switch(keyCode){
+							case 38:
+							case 40:
+							case 13:
+							if(Tips.innerHTML){
+								preventDefault(e);
+							};
+						}
+					});
+				},
+				//匹配点号之前的字符串，并且验证是不是字符。
+				execObjStr : function(string,dotIndex){
+					var objArr = [];
+					if(!string) return;
+					while(string.substring(dotIndex,dotIndex+1) == '.' && dotIndex > 0){
+						var str = this.getStr(string,dotIndex,true);
+						if(!str) return;
+						objArr.unshift(str.string);
+						dotIndex = dotIndex - str.string.length - 1;
+					}
+					return objArr;
+				}
+			}
+		})();
+		window.onload = function(){
+			var console = $('jsConsole'), execButton = $('execute');
+			jsConsole.init(console,execButton);
+		}
+	</script>
+</head>
+<body>
+	<form action="#">
+		<textarea name=""  cols="30" rows="10" id="jsConsole" class="jsText"></textarea>
+		<input type="button" id="execute" value="运行" />
+	</form>
+	<!--<div id="js01" class="js">asdfasdg adsg adsg asdf</div>-->
+	<div id="returnVal"></div>
+</body>
+</html>
