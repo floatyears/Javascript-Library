@@ -1,0 +1,22 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>jsConsole</title>
+	<script type="text/javascript" src="../../library.js"></script>
+	
+</head>
+<body>
+	<script type="text/javascript">
+		var addJS = function (){
+			/*
+			if(window.js){
+				loadScriptString(window.js);
+			}
+			*/
+			//window.opener.jsConsole.executJS();
+			loadScriptString(window.opener.jsConsole.jsText);
+		}();
+	</script>
+</body>
+</html>

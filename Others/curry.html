@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title></title>
+</head>
+<body>
+	<script type="text/javascript">
+	//一个简单的现代currying函数
+ 
+      function sum(){
+        var result=0;
+        for(var i=0, n=arguments.length; i<n; i++){
+          result += arguments[i];
+        }
+        return result;
+      };
+      var curry = function(fn){//原函数的参数为函数
+        return function(args){//内部函数的参数为数组，由于立即执行，因此直接到第三重去
+          var self= arguments.callee;//把自身保存起来
+          return function(){ //这才是第二次调用的函数
+            if(arguments.length){//如果还有要添加的参数
+              [].push.apply(args,arguments);
+              return self(args);
+            }
+            else return fn.apply(this,args);//执行
+          }
+        }([]);
+      };
+
+      function curry2(fn){
+      	var args = []
+      	return function(){
+      		if(arguments.length){
+      			[].push.apply(args,arguments);
+      			return arguments.callee;
+      		}else{
+      			return fn.apply(this,args);
+      		}
+      	}
+      }
+
+      var sum2= curry2(sum);
+      sum2= sum2(1)(2)(3)(4)(5);
+      alert(sum2());
+
+	</script>
+</body>
+</html>

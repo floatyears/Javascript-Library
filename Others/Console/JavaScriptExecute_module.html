@@ -5,16 +5,16 @@
 	<title>Javascript</title>
 	<link rel="stylesheet" href="../../common.css">
 	<style type="text/css">
-		.js{height:200px;width:200px;border:2px blue solid;margin: 20px 0px 40px 0px;}
+		.js{height:200px;width:200px;border:2px blue solid;margin: 20px 0px 40px 0px;margin: 20px 0px 40px 0px;font-family: Consolas;}
 		.jsText{margin: 20px 0px 0px 40px;}
-		.tips{list-style-type: none;border:1px solid #666;background:#eee;}
+		.tips{list-style-type: none;border:1px solid #666;background:#eee;max-height:200px;overflow-y: scroll;}
 		.tips li:hover,.hover{background:green;color:#fff;}
 	</style>
 	<script type="text/javascript" src="../../library.js"></script>
 	<script type="text/javascript" src="cursor.js"></script>
 	<script type="text/javascript">
 		var jsConsole = (function(){
-			var console, executeButton, currStr = {},selectedTip;
+			var consoleText, executeButton, currStr = {},selectedTip;
 			var Tips = document.createElement('ul');
 			Tips.className = 'tips';
 			Tips.style.cssText = 'position:absolute;'
@@ -22,10 +22,19 @@
 
 				//初始化，传入参数elem为要js输入的文本框元素，execute为执行按钮
 				init : function(elem,execute,options){
-					console = elem;
+					var _this = this;
+					consoleText = elem;
 					executeButton = execute;
+					//setTimeout(function(){
+						addEvent(executeButton,'click',function(){
+							_this.executJS();
+						});
+					//},30)
+					
 					document.getElementsByTagName('body')[0].appendChild(Tips);
-					this.addKeyEvent(console);
+					this.addKeyEvent(consoleText);
+					this.disappear(Tips);
+					//this.resize(console);
 				},
 
 				//获取当前光标所在的字符串，字符串以单词边界来限定。
@@ -53,7 +62,7 @@
 					
 					var currString = rightStr || leftStr ? (leftStr?leftStr[1]:'') + (rightStr?rightStr[1]:'') : null;
 					
-					//
+					//指定改变currStr。
 					if(!_changeCurrStr){
 						currStr.string = currString
 						currStr.all = string;
@@ -68,7 +77,13 @@
 						end : end
 					}
 				},
-
+				//貌似这个方法不起作用。
+				resize:function(jsConsole){
+					addEvent(jsConsole,'resize',function(){
+						jsConsole['{$clone_div}'].style.width = jsConsole.offsetWidth;
+						console.log('js');
+					});
+				},
 				//搜索obj中的以prop开头的属性。
 				searchProp : function(obj,prop,_props,_deep){
 					//console.log('prop:'+prop);
@@ -131,16 +146,30 @@
 
 				//执行js的方式
 				executJS : function(val){
+					/*
 					var script = document.createElement('script');
 					script.innerHTML = val;
 					document.getElementsByTagName('head')[0].appendChild(script);
+					*/
+					
+					openWindow = window.open('Console.html');
+					
+					this.jsText = consoleText.value;
+					//console.log(opend);
+					//opend.js = console.value;
+					//setTimeout(function(){
+				
+					//openWindow.js = consoleText.value;
+					
+					//},1000)
+					//return consoleText.value;
 				},
 
 				//显示代码提示
 				showTips : function(){
 					
-					var index = getCursorIndex(console);
-					var strObj = this.getStr(console.value,index);
+					var index = getCursorIndex(consoleText);
+					var strObj = this.getStr(consoleText.value,index);
 					var str = strObj? strObj.string : null;
 
 					var objArr = this.execObjStr(currStr.all,currStr.start-1);
@@ -150,7 +179,10 @@
 					
 
 					//console.log(props);
-					if(!props) return;
+					if(!props){
+						this.disappear(Tips);
+						return;
+					}
 
 					for (var i = props.length - 1; i+1; i--) {
 						var li = document.createElement('li');
@@ -161,16 +193,24 @@
 
 					var returnVal = $('returnVal');
 					returnVal.innerHTML = '';
-					var pos = getCursorPos(console);
+					var pos = getCursorPos(consoleText);
 					Tips.style.left = pos.left + 'px';
 					Tips.style.top = pos.bottom + 'px';
 
-					//清空上一次的提示
-					Tips.innerHTML = '';
-					Tips.appendChild(fragment);
+					this.disappear(Tips);
+					
+					if(fragment.childNodes.length){
+						Tips.appendChild(fragment);
+						Tips.style.display = 'block';
+					}
+					
 
 					//console.log(getCursorPos(console));
 
+				},
+				disappear:function(tips){
+					tips.style.display = 'none';
+					tips.innerHTML = '';
 				},
 				addKeyEvent:function(consoleElem){
 					var _this = this;
@@ -191,10 +231,17 @@
 							case 13:
 							preventDefault(e);
 							//console.log(keyCode);
-							if(currStr.start < currStr.end && selectedTip ){
+							if(currStr.start <= currStr.end && selectedTip ){
 								//console.log('enter');
 								consoleElem.value = currStr.all.substring(0,currStr.start) + selectedTip.innerHTML + currStr.all.substring(currStr.end);
-								Tips.innerHTML = '';
+								setCursorIndex(consoleText,currStr.start+selectedTip.innerHTML.length);
+								selectedTip = null;
+								_this.disappear(Tips);
+							}
+							break;
+							case 27:
+							if(Tips.childNodes.length){
+								_this.disappear(Tips);
 							}
 							break;
 							default:
@@ -220,7 +267,7 @@
 					if(!string) return;
 					while(string.substring(dotIndex,dotIndex+1) == '.' && dotIndex > 0){
 						var str = this.getStr(string,dotIndex,true);
-						if(!str) return;
+						if(!str || str.start >= str.end) return;
 						objArr.unshift(str.string);
 						dotIndex = dotIndex - str.string.length - 1;
 					}
@@ -229,9 +276,11 @@
 			}
 		})();
 		window.onload = function(){
-			var console = $('jsConsole'), execButton = $('execute');
-			jsConsole.init(console,execButton);
+			var consoleText = $('jsConsole'), execButton = $('execute');
+			jsConsole.init(consoleText,execButton);
 		}
+
+		
 	</script>
 </head>
 <body>

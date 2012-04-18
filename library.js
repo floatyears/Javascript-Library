@@ -550,6 +550,59 @@ function getMousePosition(e){
 }
 
 /*
+ * getElemPos():获取元素在页面中的位置。
+ */
+function getElemPos(elem){
+	var actualLeft = elem.offsetLeft,actualTop = elem.offsetTop;
+	var current = elem.offsetParent;
+	while(current!=null){
+		actualTop += current.offsetTop;
+		actualLeft += current.offsetLeft;
+		current = current.offsetParent;
+	}
+	return {
+		left : actualLeft,
+		top : actualTop
+	}
+}
+
+/*
+ * getBoundingClientRect():获取元素在浏览器视窗中的位置。
+ *
+ */
+function getBoundingClientRect(elem){
+	var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+	var scrollLeft = document.documentElement.scrollLeft || document.body.scrollLeft;
+	if(elem.getBoundingClientRect){
+		if(typeof arguments.callee.offset != 'number'){
+			var temp = document.createElement('div');
+			temp.style.cssText = 'position:absolute;left:0px;top:0px;';
+			document.body.appendChild(temp);
+			arguments.callee.offset = -temp.getBoundingClientRect().top - scrollTop;
+			document.body.removeChild(temp);
+			temp = null;
+		}
+		var rect = elem.getBoundingClientRect();
+		var offset = arguments.callee.offset;
+		return{
+			left:rect.left + offset,
+			right:rect.right + offset,
+			top:rect.top + offset,
+			bottom:rect.bottom + offset
+		}
+	}
+	else{
+		var actualPos = getElemPos(elem);
+		return {
+			left : actualPos.left - scrollLeft,
+			top : actualPos.right - scrollTop,
+			right : actualPos.left + elem.offsetWidth - scrollLeft,
+			bottom : actualPos.top + elem.offsetHeight - scrollTop
+		}
+	}
+}
+
+/*
  * getKeyPressed():获取按键的键值
  *
  *
@@ -1863,5 +1916,20 @@ function loadScript(url,callback){
 		}
 	}
 	script.url = url;
-	document.getElementsByTagName('head')[0].appendChild(script);
+	document.getElementsByTagName('body')[0].appendChild(script);
 }
+
+//动态载入js字符串
+
+function loadScriptString(code){
+	var script = document.createElement('script');
+	script.type = 'text/javascript';
+	try{
+		script.appendChild(document.createTextNode(code)); //因为script标签不支持innerHTML属性。
+	}
+	catch(e){
+		script.text = code; //IE不允许修改script标签的子节点。
+	}
+	document.body.appendChild(script);
+}
+

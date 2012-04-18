@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title></title>
+	<script type="text/javascript">
+		window.opener.openWindow();
+		window.onload = function(){
+			var returnVal = document.getElementById('returnVal');
+			function printFib(i){
+				returnVal.innerHTML += Fib(i) + ' \b';
+				
+				i++;
+				setTimeout(function(){
+					printFib(i);
+				},2)
+				
+			};
+			printFib(1);
+		}
+		function Fib(i){
+			if (i==1 || i==2) { return 1;};
+			return arguments.callee(i-1) + arguments.callee(i-2);
+		}
+	</script>	
+</head>
+<body>
+	<div id="returnVal"></div>
+</body>
+</html>

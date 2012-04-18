@@ -1,0 +1,76 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title></title>
+	<style type="text/css">
+		div{width:100px;height:100px;}
+	</style>
+	<script type="text/javascript" src="jquery-1.7.1.js"></script>
+	<script type="text/javascript">
+		//var a = $('<a></a>',{onclick:function(){}});
+		//console.log(a instanceof jQuery);
+		//var a = $('<p><a></a></p>');
+		$(function(){
+			var div1 = $('#test');
+			var div2 = $('<div><a></a></div><p></p>');
+			div2.slice(0,1);
+			var div3 = $('.test');
+			$.data(div1,'test.a',{a:1});
+			div1.data('test.a');
+			var div4 = $('div');
+			div4.toggle(
+			  function () {
+				$(this).addClass("selected");
+			  },
+			  function () {
+				$(this).removeClass("selected");
+			  }
+			);
+			div4.animate({height:'40px'},1000)
+			div4.click(function(){/*alert(1)*/});
+			div4.trigger('click');
+			var a = div4.get(0);
+			//var form = $('form').submit(function(){});
+			//var d = div4.map(function(elem,i){
+				//return this.id;
+			//})
+			div1.click(function(){
+				$('a').trigger('click');
+				$('form').trigger('submit');
+			});
+			$('li.third-item').nextAll().andSelf().css('background-color', 'red');
+			var text = $('a').text();
+			
+		})
+		var defer = $.Deferred(),
+			filtered = defer.pipe(function( value ) {
+			  return value*2
+			},function(a){return a*3});
+
+		
+		filtered.done(function( value ) {
+		  //alert( "Value is ( 2*5 = ) 10: " + value );
+		});
+		defer.resolve( 5 );
+		var defer1 = $.Deferred(),
+			filter1 = defer1.pipe(1);
+		defer1.resolve(2);
+		$.ajax('localhost');
+		
+	</script>
+</head>
+<body>
+	<div id="test">点击我</div>
+	<div class="test"></div>
+	<form action=""></form>
+	<a href="http://localhost/practice/Others/jQuery-analysis/">点击我</a>
+	<ul>
+   <li>list item 1</li>
+   <li>list item 2</li>
+   <li class="third-item">list item 3</li>
+   <li>list item 4</li>
+   <li>list item 5</li>
+</ul>
+</body>
+</html>
