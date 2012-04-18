@@ -1,0 +1,68 @@
+package
+{
+	import flash.display.Sprite;
+	import flash.events.Event;
+	import flash.events.KeyboardEvent;
+	import flash.text.TextField;
+	import flash.text.TextFieldType;
+	import flash.text.TextFormat;
+	import flash.text.TextFormatAlign;
+	import flash.utils.*;
+	
+	public class InputCount extends Sprite
+	{
+		private var inputTextField:TextField = new TextField();
+		private var timeTextField:TextField = new TextField();
+		private var format:TextFormat = new TextFormat();
+		private var time:uint = 10;
+		private var count:uint = 0;
+		public function InputCount()
+		{
+			init();
+			addChild(inputTextField);
+			//trace('Hello Wordl!');
+			this.stage.addEventListener(KeyboardEvent.KEY_DOWN,inputHandler);
+			setInterval(Time,1000)
+		}
+		private function init():void{
+			inputTextField.x = 10;
+			inputTextField.y = 30;
+			inputTextField.height = 30;
+			inputTextField.width = 300;
+			inputTextField.background = true;
+			inputTextField.border = true;
+			inputTextField.wordWrap = true;
+			//inputTextField.text = 'Hello World';
+			
+			format.font = 'Tohama';
+			format.color = '0xFF0000';
+			format.size = 14;
+			format.underline = true;
+			
+			inputTextField.defaultTextFormat = format;
+			
+			timeTextField.y = 10;
+			timeTextField.width = 300;
+			timeTextField.height = 20;
+			timeTextField.border = true;
+		}
+		private function inputHandler(event:KeyboardEvent):void{
+			
+			//trace("keyDownHandler: " + event.keyCode);
+			inputTextField.text = event.keyCode.toString();
+			addChild(inputTextField);
+			count++;
+		}
+		private function Time():void
+		{
+			timeTextField.text = (time?time--:Timeout()).toString();
+			addChild(timeTextField);
+		}
+		private function Timeout():String
+		{
+			//var ret:String = 'The Total Number of the input letters is: ' + count.toString();
+			this.stage.removeEventListener(KeyboardEvent.KEY_DOWN,inputHandler);
+			return 'The Total Number of the input letters is: ' + count.toString();
+		}
+	}
+}
