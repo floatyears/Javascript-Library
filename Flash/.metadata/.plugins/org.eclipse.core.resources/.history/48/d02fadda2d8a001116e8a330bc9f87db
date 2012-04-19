@@ -1,0 +1,87 @@
+package     
+{    
+	
+	import flash.events.Event;    
+	import flash.geom.Matrix;    
+	import flash.geom.Point;    
+	import flash.display.*;    
+	
+	/**  
+	 * ...  
+	 * @author ongsh  
+	 */    
+	public class rotation extends Sprite     
+	{    
+		
+		public function rotation():void     
+		{    
+			if (stage) init();    
+			else addEventListener(Event.ADDED_TO_STAGE, init);    
+		}    
+		
+		private function init(e:Event = null):void     
+		{    
+			removeEventListener(Event.ADDED_TO_STAGE, init);    
+			// entry point    
+			
+			var s1:Shape = new Shape();    
+			s1.graphics.lineStyle(0);    
+			s1.graphics.beginFill(0);    
+			s1.graphics.drawRect(0, 0, 100, 100);    
+			s1.graphics.endFill();    
+			s1.x = 200;    
+			s1.y = 200;    
+			addChild(s1);    
+			
+			var s2:Shape = new Shape();    
+			s2.graphics.lineStyle(0);    
+			s2.graphics.beginFill(0xff0000);    
+			s2.graphics.drawRect(0, 0, 100, 100);    
+			s2.graphics.endFill();              
+			s2.x = s1.x;    
+			s2.y = s1.y;    
+			addChild(s2);    
+			
+			var angle:Number = 45;    
+			
+			centerRotate(s2, angle);    
+			
+			centerRotate(s1, 10);    
+			centerRotate(s2, 60);    
+		}    
+		
+		/**  
+		 * 绕中心点旋转  
+		 *   
+		 * @param   mc  元件  
+		 * @param   angle   角度  
+		 */    
+		public function centerRotate(mc:DisplayObject,angle:Number):void     
+		{           
+			var currentRotation:Number = mc.rotation;    
+			//获取mc不旋转时候的尺寸    
+			mc.rotation = 0;    
+			var mcWidth:Number = mc.width;    
+			var mcHeight:Number = mc.height;    
+			mc.rotation = currentRotation;    
+			
+			//获取mc当前中心点坐标    
+			var pointO:Point = mc.localToGlobal(new Point(mcWidth / 2, mcHeight / 2));    
+			
+			//旋转mc    
+			mc.rotation = angle;    
+			
+			//获取mc旋转后中心点坐标    
+			var pointO2:Point = mc.localToGlobal(new Point(mcWidth / 2, mcHeight / 2));    
+			//平移到原来中心点O    
+			var p3:Point = pointO.subtract(pointO2);    
+			var matrix:Matrix = mc.transform.matrix;    
+			matrix.translate(p3.x, p3.y);    
+			
+			mc.transform.matrix = matrix;    
+		}    
+		
+		
+	}    
+	
+} 

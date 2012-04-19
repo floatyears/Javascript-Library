@@ -1,0 +1,9 @@
+package
+{
+	public class textInput
+	{
+		public function textInput()
+		{
+		}
+	}
+}

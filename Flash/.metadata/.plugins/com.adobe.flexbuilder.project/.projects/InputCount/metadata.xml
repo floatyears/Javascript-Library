@@ -2,4 +2,6 @@
 <projectMetadata>
   <swf bgcolor="ffffff" fullPath="/InputCount/bin-debug/InputCount.swf" height="100%" pageTitle="" width="100%"/>
   <generatedHTMLResources/>
+<swf bgcolor="ffffff" fullPath="/InputCount/bin-debug/rotation.swf" height="100%" pageTitle="" width="100%"/>
+  <swf bgcolor="ffffff" fullPath="/InputCount/bin-debug/textInput.swf" height="100%" pageTitle="" width="100%"/>
 </projectMetadata>
